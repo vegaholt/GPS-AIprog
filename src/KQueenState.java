@@ -36,12 +36,15 @@ public class KQueenState implements State {
 	//Displays the state
 	public void printState(){
 		//Displays the grid
-		for(int i = 0; i < k; i++){
-			String printRow = state.substring((i*k), ((i+1)*k));
-			for (int j = 0; j < k; j++) {
-				System.out.print(printRow.charAt(j) + " ");
+		if (k <= 50) {
+			
+			for(int i = 0; i < k; i++){
+				String printRow = state.substring((i*k), ((i+1)*k));
+				for (int j = 0; j < k; j++) {
+					System.out.print(printRow.charAt(j) + " ");
+				}
+				System.out.println();
 			}
-			System.out.println();
 		}
 		//Displays the value
 		System.out.println("Value: " + getStateValue());

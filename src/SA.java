@@ -19,6 +19,7 @@ public class SA extends LocalSearch{
 
 		P.initState();
 		System.out.println("Initial solution");
+		P.printState();
 		
 		double best = P.getStateValue();
 		
@@ -47,7 +48,7 @@ public class SA extends LocalSearch{
 		
 		//Display solution
 		System.out.println("Solution");
-		
+		P.printState();
 	}
 	
 	//Forskjell for puzzles
