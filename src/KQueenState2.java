@@ -135,6 +135,10 @@ public class KQueenState2 implements State {
 
 	// Generates n neighbours
 	public void generateNeighbours(int n) {
+		
+		/*
+		 * BUG: overkj¿rer this.state
+		 * */
 		// Initiate array
 		neighbours = new State[n];
 		
