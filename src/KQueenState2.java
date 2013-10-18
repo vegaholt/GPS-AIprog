@@ -1,7 +1,7 @@
 public class KQueenState2 implements State {
 
 	public int k;
-	public int[][] state;
+	public int[][] state; // Boolean
 	public int[] queen;
 	public State[] neighbours;
 
@@ -135,30 +135,33 @@ public class KQueenState2 implements State {
 
 	// Generates n neighbours
 	public void generateNeighbours(int n) {
-		
+
 		/*
 		 * BUG: overkj¿rer this.state
-		 * */
+		 */
 		// Initiate array
 		neighbours = new State[n];
-		
+
 		// Temporary arrays
-		int[][] newState;
-		int[] newQueen;
-		
+		int[][] newState = new int[k][k];
+		int[] newQueen = new int[k];
+
 		// Generates n number of neighbours
 		for (int i = 0; i < n; i++) {
 
 			// Initiate values for new States
-			newState = this.state;
-			newQueen = this.queen;
+			for (int j = 0; j < k; j++) {
+				System.arraycopy(state[j], 0, newState[j], 0, k);
+			}
+			System.arraycopy(queen, 0, newQueen, 0, k);
 
 			// Collect random row
 			int rowNumber = (int) (Math.random() * k);
 
 			// Find queen index
 			int indexOfQ = newQueen[rowNumber];
-			System.out.println("row: " + rowNumber + " index of q: " + indexOfQ);
+			System.out
+					.println("row: " + rowNumber + " index of q: " + indexOfQ);
 
 			// Move Queen +1 to a random direction
 			if (indexOfQ == (k - 1)) {
