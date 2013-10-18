@@ -1,3 +1,4 @@
+package problemSolver;
 public interface State {
 
 	public void initState();

@@ -1,3 +1,5 @@
+package problemSolver;
+
 public class SA extends LocalSearch {
 	public double temperature;
 	public double coolingRate;
@@ -15,22 +17,26 @@ public class SA extends LocalSearch {
 	}
 
 	public void run() {
-
+		//Start timer
+		long time = System.nanoTime();
+		
+		//Initiate state
 		P.initState();
+		
+		//Print init solution
 		System.out.println("Initial solution");
 		P.printState();
- 	
+
 		double best = P.getStateValue();
 
-		while (temperature > 1) {
-			// Return solution if acceptable
+		while (temperature > 1) { // Return solution if acceptable
 			if (best > acceptanceValue)
 				break;
 
-			// Generate neighbours
+			// Generate neighbours 
 			P.generateNeighbours(neighbourCount);
 
-			// Collect best neighbour
+			// Collect best neighbour 
 			State bestNeighbour = P.getBestNeighbour();
 
 			double q = (bestNeighbour.getStateValue() - best) / best;
@@ -43,10 +49,13 @@ public class SA extends LocalSearch {
 				P = P.getRandomNeighbour();
 			}
 			temperature -= coolingRate;
-		}
 
+		}
 		// Display solution
-		System.out.println("Solution");
+		System.out.println("Final solution");
 		P.printState();
+		
+		//Display runtime
+		System.out.println("Runtime: " + (System.nanoTime()-time) + " nanoseconds");
 	}
 }
