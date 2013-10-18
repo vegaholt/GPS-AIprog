@@ -4,7 +4,7 @@ public class Main {
 		// SA sa_kq = new SA(new KQueenState(400), 1000, 0.3, 1.0, 20);
 		// sa_kq.run();
 
-		SA sa_kq_new = new SA(new KQueenState2(8), 1000, 0.3, 1.0, 20);
+		SA sa_kq_new = new SA(new KQueenState2(1000), 1000, 0.3, 1.0, 20);
 		sa_kq_new.run();
 	}
 }

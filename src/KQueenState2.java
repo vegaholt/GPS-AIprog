@@ -160,8 +160,7 @@ public class KQueenState2 implements State {
 
 			// Find queen index
 			int indexOfQ = newQueen[rowNumber];
-			System.out
-					.println("row: " + rowNumber + " index of q: " + indexOfQ);
+
 
 			// Move Queen +1 to a random direction
 			if (indexOfQ == (k - 1)) {
@@ -191,9 +190,6 @@ public class KQueenState2 implements State {
 
 			// Create neighbour
 			neighbours[i] = new KQueenState2(k, newState, newQueen);
-			neighbours[i].printState();
-			System.out.println("Initial state");
-			printState();
 		}
 	}
 

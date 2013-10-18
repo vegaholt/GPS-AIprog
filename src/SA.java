@@ -19,9 +19,7 @@ public class SA extends LocalSearch {
 		P.initState();
 		System.out.println("Initial solution");
 		P.printState();
-		
-		P.generateNeighbours(1);
-/*
+ 	
 		double best = P.getStateValue();
 
 		while (temperature > 1) {
@@ -49,6 +47,6 @@ public class SA extends LocalSearch {
 
 		// Display solution
 		System.out.println("Solution");
-		P.printState();*/
+		P.printState();
 	}
 }
