@@ -1,48 +1,45 @@
-public class KQueenState implements State {
+public class KQueenState2 implements State {
 
 	public int k;
-	public String state;
+	public int[][] state;
+	public int[] queen;
 	public State[] neighbours;
 
-	// Construct state
-	public KQueenState(int k) {
+	// Construct blank state
+	public KQueenState2(int k) {
 		this.k = k;
 	}
 
 	// Construct state
-	public KQueenState(int k, String state) {
+	public KQueenState2(int k, int[][] state, int[] queen) {
 		this.k = k;
 		this.state = state;
+		this.queen = queen;
 	}
 
 	// Initiate state with random placement of Q on each row
 	public void initState() {
-		state = "";
+		// Initiate arrays
+		state = new int[k][k];
+		queen = new int[k];
 
-		// Builds blank row of k-1 length
-		String row = "";
-		for (int i = 0; i < k - 1; i++) {
-			row += "0";
-		}
-
-		// Builds k rows and insert "1" at a random position
+		// Insert queen in random position on each row
 		for (int i = 0; i < k; i++) {
 			int random = (int) (Math.random() * k);
-			state += row.substring(0, random) + "1" + row.substring(random);
+			state[i][random] = 1;
+			queen[i] = random;
 		}
 	}
 
-	// Displays the state
+	// Display state
 	public void printState() {
 		// Displays the grid
 		if (k <= 50) {
-
 			for (int i = 0; i < k; i++) {
-				String printRow = state.substring((i * k), ((i + 1) * k));
 				for (int j = 0; j < k; j++) {
-					System.out.print(printRow.charAt(j) + " ");
+					System.out.print(state[i][j] + " ");
 				}
-				System.out.println();
+				System.out.println("Queen index : " + queen[i]);
 			}
 		}
 		// Displays the value
@@ -54,18 +51,18 @@ public class KQueenState implements State {
 	// Returns number of conflicts
 	public int getConflicts() {
 		int conflicts = 0;
-		int rowCount = 0;
+		int rowCount;
 
 		// Detects conflicts on each column
 		for (int i = 0; i < k; i++) {
 			rowCount = 0;
-			for (int j = i; j < state.length(); j += k) {
-				if (state.charAt(j) == '1')
+			for (int j = 0; j < k; j++) {
+				if (queen[j] == i) {
 					rowCount++;
+				}
 			}
-			conflicts += Math.max((rowCount - 1), 0);
+			conflicts += Math.max(0, (rowCount - 1));
 		}
-
 		// Iterates through each left diagonal
 		int row = k - 2;
 		int column = 0;
@@ -100,25 +97,15 @@ public class KQueenState implements State {
 		return conflicts;
 	}
 
-	// Returns a value for the entire state
-	public double getStateValue() { // Flyttes til subclass av SA
-
-		// Calculates a value for the state
-		double value = 1 - (double) getConflicts() / (2 * k - 3);
-
-		// System.out.println("conflicts: " + conflicts + "/" + (2*k-3) +
-		// " value: " + value);
-
-		return Math.max(0, value);
-	}
-
 	// Detects conflicts on left diagonal
 	private int getDiagonalConflictsLeft(int row, int column) {
 		int count = 0;
 
 		while (row <= (k - 1) && column <= (k - 1)) {
-			if (state.charAt(k * row + column) == '1')
+
+			if (state[row][column] == 1)
 				count++;
+
 			row++;
 			column++;
 		}
@@ -130,7 +117,7 @@ public class KQueenState implements State {
 		int count = 0;
 
 		while (row <= (k - 1) && column >= 0) {
-			if (state.charAt(k * row + column) == '1')
+			if (state[row][column] == 1)
 				count++;
 			row++;
 			column--;
@@ -139,73 +126,80 @@ public class KQueenState implements State {
 		return Math.max((count - 1), 0);
 	}
 
-	// Generate neighbours
-	public void generateNeighbours(int n) {
+	// Returns a value for the entire state
+	public double getStateValue() {
+		// Calculates a value for the state
+		double value = 1 - (double) getConflicts() / (2 * k - 3);
+		return Math.max(0, value);
+	}
 
+	// Generates n neighbours
+	public void generateNeighbours(int n) {
 		// Initiate array
 		neighbours = new State[n];
-
-		// Number of neighbours
+		
+		// Temporary arrays
+		int[][] newState;
+		int[] newQueen;
+		
+		// Generates n number of neighbours
 		for (int i = 0; i < n; i++) {
 
+			// Initiate values for new States
+			newState = this.state;
+			newQueen = this.queen;
+
 			// Collect random row
-			int rowNumber = (int) (Math.random() * (k));
-			String row = state
-					.substring((rowNumber * k), ((rowNumber + 1) * k));
+			int rowNumber = (int) (Math.random() * k);
 
 			// Find queen index
-			int indexOfQ = 0;
-			for (int j = 0; j < row.length(); j++) {
-				if (row.charAt(j) == '1') {
-					indexOfQ = j;
-					break;
-				}
-			}
+			int indexOfQ = newQueen[rowNumber];
+			System.out.println("row: " + rowNumber + " index of q: " + indexOfQ);
 
 			// Move Queen +1 to a random direction
 			if (indexOfQ == (k - 1)) {
 				// Must go left
-				row = row.substring(1) + "0";
+				newQueen[rowNumber] = newQueen[rowNumber] - 1;
+				newState[rowNumber][indexOfQ] = 0;
+				newState[rowNumber][indexOfQ - 1] = 1;
+
 			} else if (indexOfQ == 0) {
 				// Must go right
-				row = "0" + row.substring(0, row.length() - 1);
-			} else {
-				// Random left or right
-				int random = (int) (Math.random() * 2);
-				if (random == 0) {
-					// Move left
-					row = row.substring(0, indexOfQ - 1)
-							+ row.substring(indexOfQ) + "0";
-				} else {
-					// Move right
-					row = "0" + row.substring(0, indexOfQ + 1)
-							+ row.substring(indexOfQ + 1, row.length() - 1);
+				newQueen[rowNumber] = newQueen[rowNumber] + 1;
+				newState[rowNumber][indexOfQ] = 0;
+				newState[rowNumber][indexOfQ + 1] = 1;
 
-				}
+			} else if ((int) (Math.random() * 2) == 0) {
+				// Random left
+				newQueen[rowNumber] = newQueen[rowNumber] - 1;
+				newState[rowNumber][indexOfQ] = 0;
+				newState[rowNumber][indexOfQ - 1] = 1;
+
+			} else {
+				// Random right
+				newQueen[rowNumber] = newQueen[rowNumber] + 1;
+				newState[rowNumber][indexOfQ] = 0;
+				newState[rowNumber][indexOfQ + 1] = 1;
 			}
 
-			// Rebuild state
-			String newState = state.substring(0, rowNumber * k) + row
-					+ state.substring((rowNumber + 1) * k);
-			// System.out.println(newState + " row: " + rowNumber);
-
 			// Create neighbour
-			neighbours[i] = new KQueenState(k, newState);
+			neighbours[i] = new KQueenState2(k, newState, newQueen);
+			neighbours[i].printState();
+			System.out.println("Initial state");
+			printState();
 		}
 	}
 
 	// Returns the best neighbour
 	public State getBestNeighbour() {
-		if (neighbours.length == 0)
-			return null;
-
 		double bestValue = 0;
 		int bestValueIndex = 0;
 
 		for (int i = 0; i < neighbours.length; i++) {
-			if (neighbours[i].getStateValue() > bestValue) {
+			double value = neighbours[i].getStateValue();
+			if (value > bestValue) {
 				bestValueIndex = i;
-				bestValue = neighbours[i].getStateValue();
+				bestValue = value;
 			}
 		}
 		return neighbours[bestValueIndex];
@@ -213,8 +207,6 @@ public class KQueenState implements State {
 
 	// Returns the best neighbour
 	public State getRandomNeighbour() {
-		if (neighbours.length == 0)
-			return null;
 		int index = (int) (Math.random() * neighbours.length);
 		return neighbours[index];
 	}

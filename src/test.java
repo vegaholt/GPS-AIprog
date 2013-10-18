@@ -1,14 +1,13 @@
-
 public class test {
-	
-	public static int k = 4;
-	public static String state = "0001100001000010";
-	//public State[] = neighbours;
-	
+
+	public static int p = 5;
+
 	public static void main(String[] args) {
-		for (int i = 0; i < 50; i++) {
-			int random = (int)(Math.random()*10);
-			System.out.println(random);
-		}
+
+		int q = p;
+		q++;
+
+		System.out.println(p);
+		System.out.println(q);
 	}
 }
