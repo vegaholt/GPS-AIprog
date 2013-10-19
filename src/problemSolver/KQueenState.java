@@ -21,8 +21,8 @@ public class KQueenState implements State {
 		this.queens = queens;
 		queens[row] = value;
 
-		this.conflicts = calculateConflicts();
-		this.value = calculateStateValue(conflicts);
+		calculateConflicts();
+		calculateStateValue();
 	}
 
 	// Initiate state
@@ -31,8 +31,8 @@ public class KQueenState implements State {
 		for (int i = 0; i < k; i++) {
 			queens[i] = (int) (Math.random() * k);
 		}
-		this.conflicts = calculateConflicts();
-		this.value = calculateStateValue(conflicts);
+		calculateConflicts();
+		calculateStateValue();
 
 	}
 
@@ -55,7 +55,7 @@ public class KQueenState implements State {
 	}
 
 	// Calculate conflicts
-	private int calculateConflicts() {
+	public void calculateConflicts() {
 		int conflicts = 0;
 		int conflictCount = 0;
 
@@ -112,7 +112,7 @@ public class KQueenState implements State {
 			conflicts += Math.max(0, (conflictCount - 1));
 		}
 
-		return conflicts;
+		this.conflicts = conflicts;
 	}
 
 	// Get conflicts
@@ -121,8 +121,8 @@ public class KQueenState implements State {
 	}
 
 	// Calculate state Value
-	private double calculateStateValue(int conflicts) {
-		return 1 - (double) conflicts / (2 * k - 3);
+	public void calculateStateValue() {
+		this.value = 1 - (double) conflicts / (2 * k - 3);
 	}
 
 	// Get state value
@@ -140,6 +140,18 @@ public class KQueenState implements State {
 			int[] newQueens = Arrays.copyOf(queens, k);
 			neighbours[i] = new KQueenState(k, newQueens, row, value);
 		}
+	}
+	
+	// Move a conflicting nodeTo
+	public void alterConflicted() {
+		
+		//Choose a random row
+		int row = (int)(Math.random()*k);
+		
+		//Check if the queen is conflicted
+		boolean isConflicted = false;
+		
+		
 	}
 
 	// Get the best neighbour
@@ -163,5 +175,12 @@ public class KQueenState implements State {
 		int random = (int) (Math.random() * neighbours.length);
 		return neighbours[random];
 	}
+
+	@Override
+	public void swap() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

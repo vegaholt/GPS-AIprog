@@ -1,4 +1,5 @@
 package problemSolver;
+
 public interface State {
 
 	public void initState();
@@ -10,6 +11,8 @@ public interface State {
 	public double getStateValue();
 
 	public void generateNeighbours(int n);
+
+	public void swap();
 
 	public State getBestNeighbour();
 

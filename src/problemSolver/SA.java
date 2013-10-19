@@ -7,23 +7,23 @@ public class SA extends LocalSearch {
 	public int neighbourCount;
 	public State P;
 
-	public SA(State state, double temperature, double coolingRate,
+	public SA(State P, double temperature, double coolingRate,
 			double acceptanceValue, int neighbourCount) {
 		this.temperature = temperature;
 		this.coolingRate = coolingRate;
 		this.acceptanceValue = acceptanceValue;
 		this.neighbourCount = neighbourCount;
-		this.P = state;
+		this.P = P;
 	}
 
 	public void run() {
-		//Start timer
+		// Start timer
 		long time = System.nanoTime();
-		
-		//Initiate state
+
+		// Initiate state
 		P.initState();
-		
-		//Print init solution
+
+		// Print init solution
 		System.out.println("Initial solution");
 		P.printState();
 
@@ -33,10 +33,10 @@ public class SA extends LocalSearch {
 			if (best > acceptanceValue)
 				break;
 
-			// Generate neighbours 
+			// Generate neighbours
 			P.generateNeighbours(neighbourCount);
 
-			// Collect best neighbour 
+			// Collect best neighbour
 			State bestNeighbour = P.getBestNeighbour();
 
 			double q = (bestNeighbour.getStateValue() - best) / best;
@@ -54,8 +54,9 @@ public class SA extends LocalSearch {
 		// Display solution
 		System.out.println("Final solution");
 		P.printState();
-		
-		//Display runtime
-		System.out.println("Runtime: " + (System.nanoTime()-time) + " nanoseconds");
+
+		// Display runtime
+		System.out.println("Runtime: " + (System.nanoTime() - time)
+				+ " nanoseconds");
 	}
 }
