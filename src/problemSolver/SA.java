@@ -56,6 +56,6 @@ public class SA extends LocalSearch {
 		P.printState();
 		
 		//Display runtime
-		System.out.println("Runtime: " + (System.nanoTime()-time) + " nanoseconds");
+		System.out.println("Runtime: " + ((System.nanoTime()-time)/1000000f) + " milliseconds");
 	}
 }
