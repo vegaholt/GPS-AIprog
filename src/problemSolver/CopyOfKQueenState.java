@@ -122,4 +122,10 @@ public class CopyOfKQueenState implements State {
 		return new CopyOfKQueenState(k, Arrays.copyOf(queens, k),  (int) (Math.random() * k),  (int) (Math.random() * k));
 	}
 
+	@Override
+	public void swap() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
