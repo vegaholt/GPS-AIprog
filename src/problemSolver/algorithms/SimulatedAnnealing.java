@@ -22,33 +22,34 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 	}
 
 	public void solve() {
-		double best = P.getStateValue();
+		double best = P.getStateValue(), current = best;
 		
 		float generateN = 0;
 		float other = 0;
 		int n= 1;
-		
 		while (temperature > 1) { // Return solution if acceptable
-			if (best >= acceptanceValue)
-				break;
+			
 			long t = System.nanoTime();
 			double bestNeighbour = P.getBestNeighbour(neighbourCount, acceptanceValue);
 			generateN = getAverage(n, t, generateN);
 			
 			
 			t = System.nanoTime();
-			
-			double q = (bestNeighbour - best) /best;
-			double p = Math.min(0, Math.exp(-q / temperature));
-			double x = Math.random();
-			
-			if (x > p) {
-				P.makeStatePermanent();
-				best = bestNeighbour;
+
+			if (acceptanceProbability(current, bestNeighbour,temperature) > Math.random()) {
+				current = bestNeighbour;
+				
+				if(bestNeighbour > best){
+					best = bestNeighbour;
+					if (best >= acceptanceValue)
+						break;
+					P.makeStatePermanent();
+				}
 			} else {
-				P.setRandomNeighbour();
-				//P.revertStory();
+				P.revertLast();
 			}
+			
+			
 			other = getAverage(n, t, other);
 			
 			temperature *= 1-coolingRate;
@@ -59,13 +60,22 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 		System.out.printf("Average generate-neighbours: %f, Average other:%f \n", generateN/1000000f, other/1000000f);
 	}
 	
+	private double acceptanceProbability(double current, double newScore, double temp){
+		//If better accept it
+		 if (newScore > current) {
+	            return 1.0;
+	        }
+        // If the new solution is worse, calculate an acceptance probability
+        return Math.exp(-1*(newScore - current) / temp);
+	}
+	
 	private float getAverage(int n, float time, float oldAverage){
 		
 		return (oldAverage*(n-1) + (System.nanoTime()-time))/n;
 	}
 	
 	public static void main(String[] args){
-		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(500), 10000, 0.01, 1.0, 30);
+		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(100), 10000, 0.01, 1.0, 30);
 		sa.run();
 	}
 }

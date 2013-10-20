@@ -58,6 +58,11 @@ public abstract class StateManager {
 	public void makeStatePermanent() {
 		history.clear();
 	}
+	
+	public void revertLast(){
+		State2 s = history.poll();
+		if(s != null) values[s.index] = s.value;
+	}
 
 	/**
 	 * Revert the values array to the last permanent state made
