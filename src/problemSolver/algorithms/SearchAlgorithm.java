@@ -3,7 +3,7 @@ package problemSolver.algorithms;
 import problemSolver.statemanager.StateManager;
 
 public abstract class SearchAlgorithm {
-	protected final StateManager P;
+	public final StateManager P;
 	
 	public SearchAlgorithm(StateManager P){
 		this.P = P;

@@ -15,8 +15,7 @@ public class MinConflict extends SearchAlgorithm {
 	}
 
 	public void solve() {
-
-
+		System.out.println("Min conflicts");
 		// Counter
 		int counter = 0;
 		// Get conflicts

@@ -22,6 +22,7 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 	}
 
 	public void solve() {
+		System.out.println("Simulated anealing");
 		double best = P.getStateValue(), current = best;
 		
 		float generateN = 0;
@@ -36,18 +37,19 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 			
 			t = System.nanoTime();
 
+			if(bestNeighbour > best){
+				best = bestNeighbour;
+				P.makeStatePermanent();
+				if (best >= acceptanceValue)
+					break;
+			}
+			
 			if (acceptanceProbability(current, bestNeighbour,temperature) > Math.random()) {
 				current = bestNeighbour;
-				
-				if(bestNeighbour > best){
-					best = bestNeighbour;
-					if (best >= acceptanceValue)
-						break;
-					P.makeStatePermanent();
-				}
 			} else {
 				P.revertLast();
 			}
+			
 			
 			
 			other = getAverage(n, t, other);
@@ -66,7 +68,7 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 	            return 1.0;
 	        }
         // If the new solution is worse, calculate an acceptance probability
-        return Math.exp(-1*(newScore - current) / temp);
+        return Math.exp((newScore - current) / temp);
 	}
 	
 	private float getAverage(int n, float time, float oldAverage){
@@ -75,7 +77,7 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 	}
 	
 	public static void main(String[] args){
-		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(100), 10000, 0.01, 1.0, 30);
+		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(100), 10000, 0.001, 1.0, 30);
 		sa.run();
 	}
 }

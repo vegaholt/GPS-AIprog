@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 public abstract class StateManager {
 	final protected LinkedList<StateManager.State2> history;
-	protected int[] values;
+	public int[] values;
 	private int minValue, maxValue;
 	//int lastValue;
 	double bestScore;
