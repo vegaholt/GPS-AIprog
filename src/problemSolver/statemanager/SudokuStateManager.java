@@ -4,25 +4,36 @@ import java.util.ArrayList;
 
 public class SudokuStateManager extends StateManager {
 
-	public static String[] puzzle = { "9", "34", "0-0-4", "0-1-8", "0-2-7",
-			"0-4-5", "0-7-6", "1-0-9", "1-3-4", "1-8-3", "2-0-2", "2-2-6",
-			"2-4-8", "2-5-9", "2-6-5", "3-2-4", "3-4-1", "3-5-5", "3-6-6",
-			"4-0-1", "4-5-4", "4-7-5", "5-1-7", "5-1-7", "5-2-8", "5-3-2",
-			"6-5-8", "6-7-7", "7-0-7", "7-1-5", "7-7-3", "8-1-2", "8-4-3",
-			"8-5-7", "8-6-4", "8-7-1" };
+	public String[] puzzle;
+	public int size;
+	public int bulkSize;
+	public int[][] values;
+	public boolean[][] fixedValues;
+	public int[][] conflicts;
+	public int sumConflicts;
 
-	public static int size;
-	public static int bulkSize;
-	public static int[][] values;
-	public static boolean[][] fixedValues;
-	public static int[][] conflicts;
+	public SudokuStateManager(String[] puzzle) {
+		this.puzzle = puzzle;
+
+		// Read size from index 0
+		size = Integer.parseInt(puzzle[0]);
+		bulkSize = (int) Math.sqrt(size);
+
+		// Initiate fields
+		values = new int[size][size];
+		fixedValues = new boolean[size][size];
+		conflicts = new int[size][size];
+		sumConflicts = 0;
+		setValueConstrains(1, size);
+	}
 
 	public void swap() {
 
 	}
 
 	public double getStateValue() {
-		return 0;
+		calculateConflicts();
+		return 1.0 - (double)(sumConflicts/size*size*size);
 	}
 
 	public void printState() {
@@ -62,16 +73,6 @@ public class SudokuStateManager extends StateManager {
 	}
 
 	public void initState() {
-
-		setValueConstrains(1, 9);
-		// Read size from index 0
-		size = Integer.parseInt(puzzle[0]);
-		bulkSize = (int) Math.sqrt(size);
-
-		// Initiate arrays
-		values = new int[size][size];
-		fixedValues = new boolean[size][size];
-		conflicts = new int[size][size];
 
 		// Read number of fixed values from index 1
 		int numberOfFixed = Integer.parseInt(puzzle[1]);
@@ -120,7 +121,7 @@ public class SudokuStateManager extends StateManager {
 				}
 				conflicts[i][j]--;
 
-				// Iterates throug each sub bulk
+				// Sub bulk
 				int startRow = (i / bulkSize) * bulkSize;
 				int startCol = (j / bulkSize) * bulkSize;
 
@@ -132,13 +133,22 @@ public class SudokuStateManager extends StateManager {
 				}
 				conflicts[i][j]--;
 
+				// Sum up
+				sumConflicts += conflicts[i][j];
 			}
 		}
-		// System.out.println(n);
 	}
 
 	public static void main(String[] args) {
-		SudokuStateManager sudoku = new SudokuStateManager();
+
+		String[] puzzle1 = { "9", "34", "0-0-4", "0-1-8", "0-2-7", "0-4-5",
+				"0-7-6", "1-0-9", "1-3-4", "1-8-3", "2-0-2", "2-2-6", "2-4-8",
+				"2-5-9", "2-6-5", "3-2-4", "3-4-1", "3-5-5", "3-6-6", "4-0-1",
+				"4-5-4", "4-7-5", "5-1-7", "5-1-7", "5-2-8", "5-3-2", "6-5-8",
+				"6-7-7", "7-0-7", "7-1-5", "7-7-3", "8-1-2", "8-4-3", "8-5-7",
+				"8-6-4", "8-7-1" };
+
+		SudokuStateManager sudoku = new SudokuStateManager(puzzle1);
 		sudoku.initState();
 		sudoku.printState();
 		sudoku.printFixed();
@@ -146,4 +156,8 @@ public class SudokuStateManager extends StateManager {
 		sudoku.printConflicts();
 	}
 
+	@Override
+	public void setValue(int index, int value){
+
+	}
 }
