@@ -73,11 +73,11 @@ public class Main {
 		mc.run();
 		
 		//Sudoku SA
-		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle1), 10000, 0.01, 1.0, 30);
+		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle1), 10000, 0.01, 1.0, 100);
 		sa.run();
-		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle2), 10000, 0.01, 1.0, 30);
+		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle2), 10000, 0.01, 1.0, 100);
 		sa.run();
-		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle3), 10000, 0.01, 1.0, 30);
+		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle3), 10000, 0.01, 1.0, 100);
 		sa.run();
 		
 		//Sudoku MC
