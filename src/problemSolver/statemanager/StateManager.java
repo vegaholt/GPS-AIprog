@@ -112,10 +112,10 @@ public abstract class StateManager {
 			int index = (int) (Math.random() * values.length);
 			int value = getRandomConstrained();
 			oldValue = values[index];
-			values[index] = value;
+			setValue(index, value);
 			newScore = getStateValue();
 			// Revert change
-			values[index] = oldValue;
+			setValue(index, oldValue);
 			if (newScore > bestScore) {
 				bestScore = newScore;
 				bestIndex = index;
@@ -138,4 +138,7 @@ public abstract class StateManager {
 
 	public abstract void initState();
 
+	public void setValue(int index, int value){
+		this.values[index] = value;
+	}
 }
