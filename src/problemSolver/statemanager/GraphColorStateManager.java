@@ -1,7 +1,9 @@
 package problemSolver.statemanager;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GraphColorStateManager extends StateManager {
 	ArrayList<Integer[]> neighbours;
@@ -26,45 +28,46 @@ public class GraphColorStateManager extends StateManager {
 
 			int listLength = Integer.parseInt(split[0]);
 			setValuesSize(listLength);
-			//Value constrains 0-3 because 4 colors
+			// Value constrains 0-3 because 4 colors
 			setValueConstrains(0, 3);
-			
-			//int edgesLength = Integer.parseInt(split[1]);
+
+			// int edgesLength = Integer.parseInt(split[1]);
 			values = new int[listLength];
 			conflicts = new int[listLength];
-			nodePositions = new double[listLength][2]; 
-			
+			nodePositions = new double[listLength][2];
+
 			int lineNumber = 1, currentColor = 0;
 			ArrayList<ArrayList<Integer>> tmpNeightbours = new ArrayList<ArrayList<Integer>>();
-			
+
 			while ((line = br.readLine()) != null) {
-				//System.out.println(line+" parsingNodes:"+(lineNumber <= listLength));
+				// System.out.println(line+" parsingNodes:"+(lineNumber <=
+				// listLength));
 				split = line.split(" ");
 				int index = Integer.parseInt(split[0]);
-				
-				if(lineNumber <= listLength){
-					values[index] = (int)(Math.random()*3);
+
+				if (lineNumber <= listLength) {
+					values[index] = (int) (Math.random() * 3);
 					nodePositions[index][0] = Double.parseDouble(split[1]);
 					nodePositions[index][0] = Double.parseDouble(split[2]);
 					tmpNeightbours.add(new ArrayList<Integer>());
 					neighbours.add(null);
-				}else{
+				} else {
 					int index2 = Integer.parseInt(split[1]);
 					tmpNeightbours.get(index).add(index2);
 				}
-				
+
 				lineNumber++;
-				if(currentColor == 3){
+				if (currentColor == 3) {
 					currentColor = 0;
-				}else{
-					currentColor ++;
+				} else {
+					currentColor++;
 				}
 			}
-			
+
 			for (int i = 0; i < tmpNeightbours.size(); i++) {
-				neighbours.set(i, tmpNeightbours.get(i).toArray(new Integer[0]));
+				neighbours
+						.set(i, tmpNeightbours.get(i).toArray(new Integer[0]));
 			}
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -80,9 +83,9 @@ public class GraphColorStateManager extends StateManager {
 
 	@Override
 	public void printState() {
-		System.out.println("Graph Coloring file:"+fileId);
-		System.out.println("Number of conflicts:"+getConflicts());
-		System.out.println("Graph score:"+getStateValue());
+		System.out.println("Graph Coloring file:" + fileId);
+		System.out.println("Number of conflicts:" + getConflicts());
+		System.out.println("Graph score:" + getStateValue());
 	}
 
 	private int getConflicts() {
@@ -105,12 +108,38 @@ public class GraphColorStateManager extends StateManager {
 
 	@Override
 	public double getStateValue() {
-		return 1f -((float)getConflicts() / values.length);
+		return 1f - ((float) getConflicts() / values.length);
 	}
 
 	@Override
 	public void swap() {
-		
+
+		// Find node who is involved in a conflict
+		int nodeId = 0;
+		do {
+			nodeId = (int) (Math.random() * values.length);
+		} while (conflicts[nodeId] == 0);
+
+		// Gather neighbour values
+		int[] colors = new int[3];
+
+		for (int i = 0; i < neighbours.get(nodeId).length; i++) {
+			int value = values[neighbours.get(nodeId)[i]];
+			colors[value]++;
+		}
+
+		// Find the best possible value
+		int bestColor = colors[0];
+
+		for (int i = 1; i < colors.length; i++) {
+			if (colors[i] < bestColor) {
+				bestColor = i;
+			}
+		}
+
+		// Assign new value
+		values[nodeId] = bestColor;
+
 	}
 
 }

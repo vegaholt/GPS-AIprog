@@ -9,6 +9,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
+		/*
 		//KQueens MC
 		MinConflict mc = new MinConflict(new KQueenStateManager(8),10000, 1.0);
 		mc.run();
@@ -37,7 +38,10 @@ public class Main {
 		
 		sa = new SimulatedAnnealing(new GraphColorStateManager(3), 10000, 0.01, 1.0, 30);
 		sa.run();
+		*/
 		
+		MinConflict mc = new MinConflict(new GraphColorStateManager(1), 10000, 1.0);
+		mc.run();
 		
 //		SA sa_kq_8 = new SA(new KQueenState2(8), 1000, 0.3, 1.0, 20);
 //		sa_kq_8.run();
