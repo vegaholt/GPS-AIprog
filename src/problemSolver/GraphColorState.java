@@ -126,7 +126,10 @@ public class GraphColorState implements State {
 	}
 
 	public void swap() {
-		// TODO Auto-generated method stub
+		int node =
+		do{
+			
+		}while();
 
 	}
 
