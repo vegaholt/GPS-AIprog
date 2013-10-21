@@ -104,7 +104,7 @@ public class GraphColorStateManager extends StateManager {
 	}
 
 	private int getConflicts() {
-		// Reseter conflicts oversikt
+		// Reset conflicts
 		for (int i = 0; i < conflicts.length; i++) {
 			conflicts[i] = 0;
 		}

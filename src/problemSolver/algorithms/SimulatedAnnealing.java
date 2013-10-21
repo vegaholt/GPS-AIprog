@@ -1,7 +1,6 @@
 package problemSolver.algorithms;
 
-import problemSolver.statemanager.GraphColorStateManager;
-import problemSolver.statemanager.KQueenStateManager;
+
 import problemSolver.statemanager.StateManager;
 
 public class SimulatedAnnealing extends SearchAlgorithm {
@@ -57,9 +56,9 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 		}
 
 		P.revertToBest();
-		System.out.printf(
-				"Average generate-neighbours: %f, Average other:%f iterations:%d\n",
-				generateN / 1000000f, other / 1000000f,n);
+		System.out
+				.printf("Average generate-neighbours: %f, Average other:%f iterations:%d\n",
+						generateN / 1000000f, other / 1000000f, n);
 	}
 
 	private double acceptanceProbability(double current, double newScore,
@@ -77,9 +76,4 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 		return (oldAverage * (n - 1) + (System.nanoTime() - time)) / n;
 	}
 
-	public static void main(String[] args) {
-		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(
-				1000), 10000, 0.001, 1.0, 20);
-		sa.run();
-	}
 }

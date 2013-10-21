@@ -12,19 +12,23 @@ public abstract class SearchAlgorithm {
 	public void run() {
 		// Start timer
 		long time = System.nanoTime();
+
 		// Initiate state
 		P.makeStatePermanent();
 		P.initState();
 
-		// Print init solution
-		System.out.println("---Initial solution--");
+		// Display initial state
+		System.out.println("---Initial state---");
 		P.printState();
 
+		// Run algorithm
 		this.solve();
+
 		// Display solution
 		System.out.println("---Final solution---");
-
 		P.printState();
+
+		// Display runtime
 		System.out.println("Runtime: "
 				+ ((System.nanoTime() - time) / 1000000f) + " milliseconds");
 		System.out.println();

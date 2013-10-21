@@ -1,10 +1,5 @@
 package problemSolver.statemanager;
 
-import java.util.ArrayList;
-
-import problemSolver.algorithms.MinConflict;
-import problemSolver.algorithms.SimulatedAnnealing;
-
 public class SudokuStateManager extends StateManager {
 
 	public int size;
@@ -31,15 +26,13 @@ public class SudokuStateManager extends StateManager {
 		sumConflicts = 0;
 	}
 
-
 	public double getStateValue() {
 		calculateConflicts();
-		//System.out.println(sumConflicts*1.0 / (3 * size * size));
+		// System.out.println(sumConflicts*1.0 / (3 * size * size));
 		return 1.0 - 1.0 * sumConflicts / (3 * size * size);
 	}
 
 	public void printState() {
-		System.out.println("Map");
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				System.out.print(values[i * size + j] + " ");
@@ -47,8 +40,8 @@ public class SudokuStateManager extends StateManager {
 			System.out.println();
 		}
 		System.out.println();
-		
-		System.out.println("Score:"+getStateValue());
+
+		System.out.println("Score:" + getStateValue());
 	}
 
 	public void printFixed() {
@@ -78,7 +71,8 @@ public class SudokuStateManager extends StateManager {
 
 	public void initState() {
 		for (int i = 0; i < values.length; i++) {
-			if (!constrainedIndexes[i]) values[i] = getRandomConstrained();
+			if (!constrainedIndexes[i])
+				values[i] = getRandomConstrained();
 		}
 	}
 
@@ -109,30 +103,8 @@ public class SudokuStateManager extends StateManager {
 						conflicts[i]++;
 				}
 			}
-			
+
 			sumConflicts += conflicts[i];
 		}
 	}
-
-	public static void main(String[] args) {
-
-		int[][] puzzle1 = { { 4, 3, 0, 7, 0, 0, 0, 9, 0 },
-				{ 8, 0, 1, 0, 0, 0, 0, 0, 4 }, { 0, 0, 5, 2, 4, 8, 3, 0, 0 },
-				{ 6, 0, 0, 5, 0, 0, 9, 7, 0 }, { 0, 8, 4, 0, 0, 0, 6, 3, 0 },
-				{ 0, 9, 7, 0, 0, 3, 0, 0, 5 }, { 0, 0, 8, 6, 2, 9, 1, 0, 0 },
-				{ 1, 0, 0, 0, 0, 0, 5, 0, 9 }, { 0, 2, 0, 0, 0, 1, 0, 6, 8 } };
-		
-		SudokuStateManager sudoku = new SudokuStateManager(puzzle1);
-		sudoku.initState();
-		sudoku.printState();
-		sudoku.printFixed();
-		sudoku.calculateConflicts();
-		sudoku.printConflicts();
-		MinConflict m = new MinConflict(sudoku, 10000, 1.0);
-		m.run();
-//		SimulatedAnnealing sa = new SimulatedAnnealing(sudoku, 10000, 0.001, 1.0, 100);
-//		sa.run();
-		sudoku.calculateConflicts();
-	}
-
 }
