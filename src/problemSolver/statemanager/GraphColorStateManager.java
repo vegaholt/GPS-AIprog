@@ -3,17 +3,13 @@ package problemSolver.statemanager;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.logging.FileHandler;
 
 public class GraphColorStateManager extends StateManager {
 	public ArrayList<Integer[]> neighbours;
 	public float[][] nodePositions;
-	public int[] conflicts;
 
 	public GraphColorStateManager(int fileId) {
 		super();
@@ -46,11 +42,9 @@ public class GraphColorStateManager extends StateManager {
 			setValueConstrains(0, 3);
 
 			// int edgesLength = Integer.parseInt(split[1]);
-			values = new int[listLength];
-			conflicts = new int[listLength];
 			nodePositions = new float[listLength][2];
 
-			int lineNumber = 1, currentColor = 0;
+			int lineNumber = 1;
 			ArrayList<ArrayList<Integer>> tmpNeightbours = new ArrayList<ArrayList<Integer>>();
 
 			while ((line = br.readLine()) != null) {
@@ -131,32 +125,6 @@ public class GraphColorStateManager extends StateManager {
 	@Override
 	public double getStateValue() {
 		return 1f - ((float) getConflicts() / values.length);
-	}
-
-	@Override
-	public void swap() {
-
-		// Find node who is involved in a conflict
-		int nodeId = 0;
-		do {
-			nodeId = (int) (Math.random() * values.length);
-		} while (conflicts[nodeId] == 0);
-
-		int oldColor = values[nodeId], bestConflict = conflicts[nodeId], bestColor = oldColor;
-		for (int i = 0; i < 4; i++) {
-			if (i == oldColor)
-				continue;
-			values[nodeId] = i;
-			getConflicts();
-			int newConflict = conflicts[nodeId];
-			if (newConflict < bestConflict) {
-				bestConflict = newConflict;
-				bestColor = i;
-			}
-		}
-
-		values[nodeId] = bestColor;
-
 	}
 
 }

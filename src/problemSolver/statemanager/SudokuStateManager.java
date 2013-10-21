@@ -9,7 +9,6 @@ public class SudokuStateManager extends StateManager {
 
 	public int size;
 	public int bulkSize;
-	public int[] conflicts;
 	public int sumConflicts;
 
 	public SudokuStateManager(int[][] puzzle) {
@@ -29,36 +28,9 @@ public class SudokuStateManager extends StateManager {
 		}
 
 		// Initiate fields
-		conflicts = new int[values.length];
 		sumConflicts = 0;
 	}
 
-	public void convertToList(int[][] puzzel) {
-
-	}
-
-	public void swap() {
-		// Find node who is involved in a conflict
-		int nodeId = 0;
-		do {
-			nodeId = (int) (Math.random() * values.length);
-		} while (conflicts[nodeId] == 0);
-
-		int oldColor = values[nodeId], bestConflict = conflicts[nodeId], bestColor = oldColor;
-		for (int i = 0; i < size; i++) {
-			if (i == oldColor)
-				continue;
-			values[nodeId] = i;
-			getStateValue();
-			int newConflict = conflicts[nodeId];
-			if (newConflict < bestConflict) {
-				bestConflict = newConflict;
-				bestColor = i;
-			}
-		}
-
-		values[nodeId] = bestColor;
-	}
 
 	public double getStateValue() {
 		calculateConflicts();

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 public abstract class StateManager {
 	final protected LinkedList<StateManager.State> history;
 	public int[] values;
+	public int[] conflicts;
 	public boolean[] constrainedIndexes = null;
 	private int minValue, maxValue;
 
@@ -41,6 +42,7 @@ public abstract class StateManager {
 	 */
 	public void setValuesSize(int n) {
 		this.values = new int[n];
+		this.conflicts = new int[n];
 	}
 
 	/**
@@ -105,6 +107,10 @@ public abstract class StateManager {
 	public void setRandomNeighbour() {
 		addChange((int) (Math.random() * values.length), getRandomConstrained());
 	}
+	
+	public boolean isConstrainedIndex(int index){
+		return constrainedIndexes != null && constrainedIndexes[index];
+	}
 
 	// Get the best neighbour
 	public double getBestNeighbour(int generateNNeigbours, double acceptedValue) {
@@ -115,7 +121,7 @@ public abstract class StateManager {
 			int index;
 			do{
 				index = (int) (Math.random() * values.length);
-			}while(constrainedIndexes != null && constrainedIndexes[index]);
+			}while(isConstrainedIndex(index));
 			
 			int value = getRandomConstrained();
 			oldValue = values[index];
@@ -136,8 +142,32 @@ public abstract class StateManager {
 		addChange(bestIndex, bestValue);
 		return bestScore;
 	}
+	
+	public void swap() {
+		// Find node who is involved in a conflict
+		int index = 0;
+		getStateValue();
+		do {
+			index = (int) (Math.random() * values.length);
+		} while (conflicts[index] == 0 || isConstrainedIndex(index));		
+		
+		int oldValue = values[index], bestConflict = conflicts[index], bestValue = oldValue;
+		for (int i = 0; i < maxValue; i++) {
+			//Skip if same as old value
+			if (i == oldValue) continue;
+			
+			values[index] = i;
+			getStateValue();
+			int newConflict = conflicts[index];
+			if (newConflict < bestConflict) {
+				bestConflict = newConflict;
+				bestValue = i;
+			}
+		}
 
-	public abstract void swap();
+		values[index] = bestValue;
+	}
+
 
 	public abstract double getStateValue();
 

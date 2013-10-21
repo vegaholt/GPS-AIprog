@@ -69,6 +69,7 @@ public class KQueenStateManager extends StateManager {
 	}
 	
 	// Relocate conflicted K
+	@Override
 	public void swap() {
 
 		// Find row where K is involved in a conflict
