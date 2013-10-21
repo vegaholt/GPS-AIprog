@@ -2,6 +2,7 @@ package problemSolver.statemanager;
 
 import java.util.ArrayList;
 
+import problemSolver.algorithms.MinConflict;
 import problemSolver.algorithms.SimulatedAnnealing;
 
 public class SudokuStateManager extends StateManager {
@@ -37,7 +38,26 @@ public class SudokuStateManager extends StateManager {
 	}
 
 	public void swap() {
+		// Find node who is involved in a conflict
+		int nodeId = 0;
+		do {
+			nodeId = (int) (Math.random() * values.length);
+		} while (conflicts[nodeId] == 0);
 
+		int oldColor = values[nodeId], bestConflict = conflicts[nodeId], bestColor = oldColor;
+		for (int i = 0; i < size; i++) {
+			if (i == oldColor)
+				continue;
+			values[nodeId] = i;
+			getStateValue();
+			int newConflict = conflicts[nodeId];
+			if (newConflict < bestConflict) {
+				bestConflict = newConflict;
+				bestColor = i;
+			}
+		}
+
+		values[nodeId] = bestColor;
 	}
 
 	public double getStateValue() {
@@ -136,8 +156,10 @@ public class SudokuStateManager extends StateManager {
 		sudoku.printFixed();
 		sudoku.calculateConflicts();
 		sudoku.printConflicts();
-		SimulatedAnnealing sa = new SimulatedAnnealing(sudoku, 10000, 0.001, 1.0, 100);
-		sa.run();
+		MinConflict m = new MinConflict(sudoku, 10000, 1.0);
+		m.run();
+//		SimulatedAnnealing sa = new SimulatedAnnealing(sudoku, 10000, 0.001, 1.0, 100);
+//		sa.run();
 		sudoku.calculateConflicts();
 	}
 
