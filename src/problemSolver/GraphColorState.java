@@ -126,11 +126,7 @@ public class GraphColorState implements State {
 	}
 
 	public void swap() {
-		int node =
-		do{
-			
-		}while();
-
+	
 	}
 
 	public State getBestNeighbour() {

@@ -5,13 +5,12 @@ import java.util.ArrayList;
 public class KQueenStateManager extends StateManager {
 
 	public final int k;
-	private final int[][] conflicts;
+	private int[][] conflicts;
 
 	// Constructor blank state
 	public KQueenStateManager(int k) {
 		super();
 		this.k = k;
-		this.conflicts = new int[k][k];
 		this.setValueConstrains(0, k - 1);
 		setValuesSize(k);
 	}
@@ -23,6 +22,7 @@ public class KQueenStateManager extends StateManager {
 		}
 		
 		//Init conflicts
+		this.conflicts = new int[k][k];
 		for (int i = 0; i < k; i++) {
 			addK(i, values[i]);
 		}

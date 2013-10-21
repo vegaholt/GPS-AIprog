@@ -27,7 +27,7 @@ public abstract class StateManager {
 	 * Generates random int between minValue and maxValue
 	 * @return
 	 */
-	private int getRandomConstrained(){
+	public int getRandomConstrained(){
 		return minValue + (int)Math.round(Math.random() * (maxValue - minValue));
 	}
 	

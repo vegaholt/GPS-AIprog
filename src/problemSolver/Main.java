@@ -40,7 +40,7 @@ public class Main {
 		sa.run();
 		*/
 		
-		MinConflict mc = new MinConflict(new GraphColorStateManager(1), 10000, 1.0);
+		MinConflict mc = new MinConflict(new GraphColorStateManager(2), 10000, 1.0);
 		mc.run();
 		
 //		SA sa_kq_8 = new SA(new KQueenState2(8), 1000, 0.3, 1.0, 20);

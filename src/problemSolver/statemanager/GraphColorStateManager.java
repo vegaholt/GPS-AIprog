@@ -1,28 +1,42 @@
 package problemSolver.statemanager;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.FileHandler;
 
 public class GraphColorStateManager extends StateManager {
-	ArrayList<Integer[]> neighbours;
-	double[][] nodePositions;
-	int[] conflicts;
-	int fileId = 1;
+	public ArrayList<Integer[]> neighbours;
+	public float[][] nodePositions;
+	public int[] conflicts;
 
 	public GraphColorStateManager(int fileId) {
 		super();
-		this.fileId = fileId;
-		this.neighbours = new ArrayList<Integer[]>();
-	}
-
-	@Override
-	public void initState() {
-		String file = "graph-color-" + fileId + ".txt";
-		BufferedReader br = null;
+		
 		try {
-			br = new BufferedReader(new FileReader(file));
+			FileInputStream file = new FileInputStream("graph-color-" + fileId + ".txt");
+			parseFile(file);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public GraphColorStateManager(InputStream file){
+		parseFile(file);
+	}
+	
+	
+	private void parseFile(InputStream file){
+		BufferedReader br = null;
+		this.neighbours = new ArrayList<Integer[]>();
+		try {
+			br = new BufferedReader(new InputStreamReader(file));
 			String line = br.readLine();
 			String[] split = line.split(" ");
 
@@ -34,7 +48,7 @@ public class GraphColorStateManager extends StateManager {
 			// int edgesLength = Integer.parseInt(split[1]);
 			values = new int[listLength];
 			conflicts = new int[listLength];
-			nodePositions = new double[listLength][2];
+			nodePositions = new float[listLength][2];
 
 			int lineNumber = 1, currentColor = 0;
 			ArrayList<ArrayList<Integer>> tmpNeightbours = new ArrayList<ArrayList<Integer>>();
@@ -46,9 +60,8 @@ public class GraphColorStateManager extends StateManager {
 				int index = Integer.parseInt(split[0]);
 
 				if (lineNumber <= listLength) {
-					values[index] = (int) (Math.random() * 3);
-					nodePositions[index][0] = Double.parseDouble(split[1]);
-					nodePositions[index][0] = Double.parseDouble(split[2]);
+					nodePositions[index][0] = Float.parseFloat(split[1]);
+					nodePositions[index][1] = Float.parseFloat(split[2]);
 					tmpNeightbours.add(new ArrayList<Integer>());
 					neighbours.add(null);
 				} else {
@@ -57,11 +70,11 @@ public class GraphColorStateManager extends StateManager {
 				}
 
 				lineNumber++;
-				if (currentColor == 3) {
-					currentColor = 0;
-				} else {
-					currentColor++;
-				}
+				// if (currentColor == 3) {
+				// currentColor = 0;
+				// } else {
+				// currentColor++;
+				// }
 			}
 
 			for (int i = 0; i < tmpNeightbours.size(); i++) {
@@ -80,10 +93,18 @@ public class GraphColorStateManager extends StateManager {
 			}
 		}
 	}
+	
+	@Override
+	public void initState() {
+		for (int i = 0; i < values.length; i++) {
+			values[i] = getRandomConstrained();
+			
+		}
+	}
 
 	@Override
 	public void printState() {
-		System.out.println("Graph Coloring file:" + fileId);
+		System.out.println("Graph Coloring file: unknown");
 		System.out.println("Number of conflicts:" + getConflicts());
 		System.out.println("Graph score:" + getStateValue());
 	}
@@ -114,33 +135,29 @@ public class GraphColorStateManager extends StateManager {
 
 	@Override
 	public void swap() {
-
+		
 		// Find node who is involved in a conflict
 		int nodeId = 0;
 		do {
 			nodeId = (int) (Math.random() * values.length);
 		} while (conflicts[nodeId] == 0);
-
-		// Gather neighbour values
-		int[] colors = new int[3];
-
-		for (int i = 0; i < neighbours.get(nodeId).length; i++) {
-			int value = values[neighbours.get(nodeId)[i]];
-			colors[value]++;
-		}
-
-		// Find the best possible value
-		int bestColor = colors[0];
-
-		for (int i = 1; i < colors.length; i++) {
-			if (colors[i] < bestColor) {
+		
+		
+		int oldColor = values[nodeId], bestConflict = conflicts[nodeId], bestColor = oldColor;
+		for (int i = 0; i < 4; i++) {
+			if(i == oldColor) continue;
+			values[nodeId] = i;
+			 getConflicts();
+			int newConflict = conflicts[nodeId];
+			if(newConflict < bestConflict){
+				bestConflict = newConflict;
 				bestColor = i;
 			}
 		}
-
-		// Assign new value
+		
 		values[nodeId] = bestColor;
+	
 
 	}
-
+	
 }
