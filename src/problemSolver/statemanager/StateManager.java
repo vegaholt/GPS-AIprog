@@ -3,14 +3,12 @@ package problemSolver.statemanager;
 import java.util.LinkedList;
 
 public abstract class StateManager {
-	final protected LinkedList<StateManager.State2> history;
+	final protected LinkedList<StateManager.State> history;
 	public int[] values;
 	private int minValue, maxValue;
-	// int lastValue;
-	double bestScore;
 
 	public StateManager() {
-		this.history = new LinkedList<StateManager.State2>();
+		this.history = new LinkedList<StateManager.State>();
 	}
 
 	/**
@@ -53,7 +51,7 @@ public abstract class StateManager {
 	public void addChange(int index, int value) {
 		int oldValue = values[index];
 		values[index] = value;
-		history.addFirst(new State2(index, oldValue));
+		history.addFirst(new State(index, oldValue));
 	}
 
 	/**
@@ -65,7 +63,7 @@ public abstract class StateManager {
 	}
 
 	public void revertLast() {
-		State2 s = history.poll();
+		State s = history.poll();
 		if (s != null)
 			values[s.index] = s.value;
 	}
@@ -75,7 +73,7 @@ public abstract class StateManager {
 	 * history and reverting change
 	 */
 	public void revertToBest() {
-		State2 state;
+		State state;
 		// Polls element from list and revert their state change to the values
 		// list
 		while ((state = history.poll()) != null) {
@@ -89,8 +87,8 @@ public abstract class StateManager {
 	 * @author Nicolay
 	 * 
 	 */
-	class State2 {
-		public State2(int index, int value) {
+	class State {
+		public State(int index, int value) {
 			this.index = index;
 			this.value = value;
 		}
