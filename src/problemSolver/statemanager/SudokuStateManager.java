@@ -42,8 +42,8 @@ public class SudokuStateManager extends StateManager {
 
 	public double getStateValue() {
 		calculateConflicts();
-		//System.out.println(sumConflicts > size * size * size);
-		return 1.0 - (double) (sumConflicts / size * size * size);
+		//System.out.println(sumConflicts*1.0 / (3 * size * size));
+		return 1.0 - 1.0 * sumConflicts / (3 * size * size);
 	}
 
 	public void printState() {
@@ -136,7 +136,7 @@ public class SudokuStateManager extends StateManager {
 		sudoku.printFixed();
 		sudoku.calculateConflicts();
 		sudoku.printConflicts();
-		SimulatedAnnealing sa = new SimulatedAnnealing(sudoku, 10000, 0.1, 1.0, 50);
+		SimulatedAnnealing sa = new SimulatedAnnealing(sudoku, 10000, 0.001, 1.0, 100);
 		sa.run();
 		sudoku.calculateConflicts();
 	}
