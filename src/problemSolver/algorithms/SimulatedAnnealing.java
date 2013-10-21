@@ -24,7 +24,7 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 	public void solve() {
 		System.out.println("Simulated anealing");
 		double best = P.getStateValue(), current = best;
-		
+		double temperature = this.temperature;
 		float generateN = 0;
 		float other = 0;
 		int n= 1;
@@ -77,7 +77,7 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 	}
 	
 	public static void main(String[] args){
-		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(100), 10000, 0.001, 1.0, 30);
+		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(100), 10000, 0.003, 1.0, 30);
 		sa.run();
 	}
 }

@@ -13,6 +13,7 @@ public abstract class SearchAlgorithm {
 		//Start timer
 		long time = System.nanoTime();
 		//Initiate state
+		P.makeStatePermanent();
 		P.initState();
 		
 		//Print init solution
