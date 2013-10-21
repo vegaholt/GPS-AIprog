@@ -5,6 +5,7 @@ import java.util.LinkedList;
 public abstract class StateManager {
 	final protected LinkedList<StateManager.State> history;
 	public int[] values;
+	public boolean[] constrainedIndexes = null;
 	private int minValue, maxValue;
 
 	public StateManager() {
@@ -110,7 +111,12 @@ public abstract class StateManager {
 		int bestValue = 0, bestIndex = 0, oldValue = 0;
 		double bestScore = 0, newScore = 0;
 		for (int i = 0; i < generateNNeigbours; i++) {
-			int index = (int) (Math.random() * values.length);
+			
+			int index;
+			do{
+				index = (int) (Math.random() * values.length);
+			}while(constrainedIndexes != null && constrainedIndexes[index]);
+			
 			int value = getRandomConstrained();
 			oldValue = values[index];
 			values[index] = value;
