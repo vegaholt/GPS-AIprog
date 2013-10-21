@@ -49,7 +49,7 @@ public class SudokuStateManager extends StateManager {
 		}
 		System.out.println();
 	}
-	
+
 	public void printConflicts() {
 		System.out.println("Conflicts");
 		for (int i = 0; i < size; i++) {
@@ -62,20 +62,20 @@ public class SudokuStateManager extends StateManager {
 	}
 
 	public void initState() {
-		
+
 		setValueConstrains(1, 9);
 		// Read size from index 0
 		size = Integer.parseInt(puzzle[0]);
-		bulkSize = (int)Math.sqrt(size);
+		bulkSize = (int) Math.sqrt(size);
 
-		//Initiate arrays
+		// Initiate arrays
 		values = new int[size][size];
 		fixedValues = new boolean[size][size];
 		conflicts = new int[size][size];
-		
+
 		// Read number of fixed values from index 1
 		int numberOfFixed = Integer.parseInt(puzzle[1]);
-		
+
 		// Place fixed values in values and mak
 		for (int i = 2; i < numberOfFixed + 2; i++) {
 
@@ -86,55 +86,57 @@ public class SudokuStateManager extends StateManager {
 			fixedValues[Integer.parseInt(param[0])][Integer.parseInt(param[1])] = true;
 
 		}
-		
-		//Randomly hand out values
+
+		// Randomly hand out values
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				if(!fixedValues[i][j]){
+				if (!fixedValues[i][j]) {
 					values[i][j] = getRandomConstrained();
 				}
 			}
 		}
-		
-		//Iterate throug each subbulk
-			//build list with missing pieces
-			//Randomly fill in values from this list
-		
+
+		// Iterate throug each subbulk
+		// build list with missing pieces
+		// Randomly fill in values from this list
+
 	}
-	
-	private void calculateConflicts(){
+
+	private void calculateConflicts() {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				
-				//Row
+
+				// Row
 				for (int k = 0; k < size; k++) {
-					if(values[i][j]==values[i][k]) conflicts[i][j]++;
+					if (values[i][j] == values[i][k])
+						conflicts[i][j]++;
 				}
 				conflicts[i][j]--;
-				
-				//Column
+
+				// Column
 				for (int k = 0; k < size; k++) {
-					if(values[i][j]==values[k][j]) conflicts[i][j]++;
+					if (values[i][j] == values[k][j])
+						conflicts[i][j]++;
 				}
 				conflicts[i][j]--;
-				
-				
-				//Subbulk
-				int startRow = (i/bulkSize)*bulkSize;
-				int startCol = (j/bulkSize)*bulkSize;
-			
-				for (int row = startRow; row < startRow+bulkSize; row++) {
-					for (int col = startCol; col < startCol+bulkSize; col++) {
-						if(values[i][j]==values[row][col]) conflicts[i][j]++;
+
+				// Iterates throug each sub bulk
+				int startRow = (i / bulkSize) * bulkSize;
+				int startCol = (j / bulkSize) * bulkSize;
+
+				for (int row = startRow; row < startRow + bulkSize; row++) {
+					for (int col = startCol; col < startCol + bulkSize; col++) {
+						if (values[i][j] == values[row][col])
+							conflicts[i][j]++;
 					}
 				}
 				conflicts[i][j]--;
-				
+
 			}
 		}
-		//System.out.println(n);
+		// System.out.println(n);
 	}
-	
+
 	public static void main(String[] args) {
 		SudokuStateManager sudoku = new SudokuStateManager();
 		sudoku.initState();

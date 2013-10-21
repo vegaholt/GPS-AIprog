@@ -17,22 +17,22 @@ public class GraphColorStateManager extends StateManager {
 
 	public GraphColorStateManager(int fileId) {
 		super();
-		
+
 		try {
-			FileInputStream file = new FileInputStream("graph-color-" + fileId + ".txt");
+			FileInputStream file = new FileInputStream("graph-color-" + fileId
+					+ ".txt");
 			parseFile(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	public GraphColorStateManager(InputStream file){
+
+	public GraphColorStateManager(InputStream file) {
 		parseFile(file);
 	}
-	
-	
-	private void parseFile(InputStream file){
+
+	private void parseFile(InputStream file) {
 		BufferedReader br = null;
 		this.neighbours = new ArrayList<Integer[]>();
 		try {
@@ -93,12 +93,12 @@ public class GraphColorStateManager extends StateManager {
 			}
 		}
 	}
-	
+
 	@Override
 	public void initState() {
 		for (int i = 0; i < values.length; i++) {
 			values[i] = getRandomConstrained();
-			
+
 		}
 	}
 
@@ -135,29 +135,28 @@ public class GraphColorStateManager extends StateManager {
 
 	@Override
 	public void swap() {
-		
+
 		// Find node who is involved in a conflict
 		int nodeId = 0;
 		do {
 			nodeId = (int) (Math.random() * values.length);
 		} while (conflicts[nodeId] == 0);
-		
-		
+
 		int oldColor = values[nodeId], bestConflict = conflicts[nodeId], bestColor = oldColor;
 		for (int i = 0; i < 4; i++) {
-			if(i == oldColor) continue;
+			if (i == oldColor)
+				continue;
 			values[nodeId] = i;
-			 getConflicts();
+			getConflicts();
 			int newConflict = conflicts[nodeId];
-			if(newConflict < bestConflict){
+			if (newConflict < bestConflict) {
 				bestConflict = newConflict;
 				bestColor = i;
 			}
 		}
-		
+
 		values[nodeId] = bestColor;
-	
 
 	}
-	
+
 }

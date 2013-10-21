@@ -6,42 +6,47 @@ public abstract class StateManager {
 	final protected LinkedList<StateManager.State2> history;
 	public int[] values;
 	private int minValue, maxValue;
-	//int lastValue;
+	// int lastValue;
 	double bestScore;
 
 	public StateManager() {
 		this.history = new LinkedList<StateManager.State2>();
 	}
-	
+
 	/**
 	 * Set constrains for what values arrays value can be
+	 * 
 	 * @param minValue
 	 * @param maxValue
 	 */
-	public void setValueConstrains(int minValue, int maxValue){
+	public void setValueConstrains(int minValue, int maxValue) {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
-	
+
 	/**
 	 * Generates random int between minValue and maxValue
+	 * 
 	 * @return
 	 */
-	public int getRandomConstrained(){
-		return minValue + (int)Math.round(Math.random() * (maxValue - minValue));
+	public int getRandomConstrained() {
+		return minValue
+				+ (int) Math.round(Math.random() * (maxValue - minValue));
 	}
-	
+
 	/**
-	 * Initiates the value array with n size
-	 * Value array is used to store value about the puzzel
+	 * Initiates the value array with n size Value array is used to store value
+	 * about the puzzel
+	 * 
 	 * @param n
 	 */
-	public void setValuesSize(int n){
+	public void setValuesSize(int n) {
 		this.values = new int[n];
 	}
 
 	/**
-	 * Add and backup old value of a the change to the value array 
+	 * Add and backup old value of a the change to the value array
+	 * 
 	 * @param index
 	 * @param value
 	 */
@@ -50,35 +55,39 @@ public abstract class StateManager {
 		values[index] = value;
 		history.addFirst(new State2(index, oldValue));
 	}
-	
+
 	/**
-	 * Clear history of changes, making the values permanent
-	 * If you know your not going back in history further than this point!
+	 * Clear history of changes, making the values permanent If you know your
+	 * not going back in history further than this point!
 	 */
 	public void makeStatePermanent() {
 		history.clear();
 	}
-	
-	public void revertLast(){
+
+	public void revertLast() {
 		State2 s = history.poll();
-		if(s != null) values[s.index] = s.value;
+		if (s != null)
+			values[s.index] = s.value;
 	}
 
 	/**
-	 * Revert the values array to the last permanent state made
-	 * by poping the history and reverting change
+	 * Revert the values array to the last permanent state made by poping the
+	 * history and reverting change
 	 */
 	public void revertToBest() {
 		State2 state;
-		//Polls element from list and revert their state change to the values list
+		// Polls element from list and revert their state change to the values
+		// list
 		while ((state = history.poll()) != null) {
 			values[state.index] = state.value;
 		}
 	}
+
 	/***
 	 * A History state
+	 * 
 	 * @author Nicolay
-	 *
+	 * 
 	 */
 	class State2 {
 		public State2(int index, int value) {
@@ -111,7 +120,8 @@ public abstract class StateManager {
 				bestScore = newScore;
 				bestIndex = index;
 				bestValue = value;
-				if(newScore >= acceptedValue) break;
+				if (newScore >= acceptedValue)
+					break;
 			}
 
 		}
@@ -119,11 +129,13 @@ public abstract class StateManager {
 		addChange(bestIndex, bestValue);
 		return bestScore;
 	}
-	
-	
+
 	public abstract void swap();
+
 	public abstract double getStateValue();
+
 	public abstract void printState();
+
 	public abstract void initState();
 
 }
