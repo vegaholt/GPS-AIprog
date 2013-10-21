@@ -74,6 +74,15 @@ public class SudokuStateManager extends StateManager {
 
 		}
 		
+		//Randomly hand out values
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if(!fixedValues[i][j]){
+					values[i][j] = (int)(Math.random()*size);
+				}
+			}
+		}
+		
 		//Iterate throug each subbulk
 			//build list with missing pieces
 			//Randomly fill in values from this list
