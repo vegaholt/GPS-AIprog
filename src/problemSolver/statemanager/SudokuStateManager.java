@@ -156,8 +156,4 @@ public class SudokuStateManager extends StateManager {
 		sudoku.printConflicts();
 	}
 
-	@Override
-	public void setValue(int index, int value){
-
-	}
 }
