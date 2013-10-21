@@ -97,6 +97,7 @@ public class GraphColorStateManager extends StateManager {
 				if (values[i] == values[neighbours.get(i)[j]]) {
 					sumCon++;
 					conflicts[i]++;
+					conflicts[neighbours.get(i)[j]]++;
 				}
 			}
 		}
