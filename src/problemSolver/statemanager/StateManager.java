@@ -29,7 +29,7 @@ public abstract class StateManager {
 	 * 
 	 * @return
 	 */
-	public int getRandomConstrained() {
+	public int getRandomConstrained(int index) {
 		return minValue
 				+ (int) Math.round(Math.random() * (maxValue - minValue));
 	}
@@ -105,7 +105,7 @@ public abstract class StateManager {
 
 	// Get a random neighbour
 	public void setRandomNeighbour() {
-		addChange((int) (Math.random() * values.length), getRandomConstrained());
+		addChange((int) (Math.random() * values.length), getRandomConstrained(0));
 	}
 	
 	public boolean isConstrainedIndex(int index){
@@ -123,7 +123,7 @@ public abstract class StateManager {
 				index = (int) (Math.random() * values.length);
 			}while(isConstrainedIndex(index));
 			
-			int value = getRandomConstrained();
+			int value = getRandomConstrained(index);
 			oldValue = values[index];
 			values[index] = value;
 			newScore = getStateValue();

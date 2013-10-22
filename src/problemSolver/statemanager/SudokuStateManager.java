@@ -1,16 +1,21 @@
 package problemSolver.statemanager;
 
+import java.util.Arrays;
+
 public class SudokuStateManager extends StateManager {
 
 	public int size;
 	public int bulkSize;
 	public int sumConflicts;
+	public int[] valueFrequency;
 
 	public SudokuStateManager(int[][] puzzle) {
 		size = puzzle.length;
 		bulkSize = (int) Math.sqrt(puzzle.length);
 		setValueConstrains(1, size);
 		setValuesSize(size * size);
+
+		valueFrequency = new int[size+1];
 
 		this.constrainedIndexes = new boolean[values.length];
 
@@ -57,11 +62,48 @@ public class SudokuStateManager extends StateManager {
 		}
 		System.out.println();
 	}
+/*
+	@Override
+	public int getRandomConstrained(int index) {
+
+		// Nullstill valuesFrequency
+		Arrays.fill(valueFrequency, 0);
+
+		// Iterer rad
+		int startPoint = (index / size) * size;
+
+		for (int i = startPoint; i < startPoint + size; i++) {
+			if (i != index)
+				valueFrequency[values[i]]++;
+		}
+
+		// Iterer colonne
+		startPoint = index % size;
+		
+		for (int i = startPoint; i < size * size; i += size) {
+			if (i != index)
+				valueFrequency[values[i]]++;
+		}
+
+		//Choose lowest value
+		
+		int bestIndex = 1;
+		int bestValue = 9;
+		
+		for (int i = 1; i < valueFrequency.length; i++) {
+			if(valueFrequency[i]<bestValue){
+				bestIndex = i;
+				bestValue = valueFrequency[i];
+			}
+		}
+		
+		return bestIndex ;
+	}*/
 
 	public void initState() {
 		for (int i = 0; i < values.length; i++) {
 			if (!constrainedIndexes[i])
-				values[i] = getRandomConstrained();
+				values[i] = getRandomConstrained(i);
 		}
 	}
 

@@ -40,7 +40,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		//KQueens SA
+		/*//KQueens SA
 		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(8), 10000, 0.01, 1.0, 30);
 		sa.run();
 		sa = new SimulatedAnnealing(new KQueenStateManager(25), 10000, 0.01, 1.0, 30);
@@ -70,10 +70,10 @@ public class Main {
 		mc = new MinConflict(new GraphColorStateManager(2), 10000, 1.0);
 		mc.run();
 		mc = new MinConflict(new GraphColorStateManager(3), 10000, 1.0);
-		mc.run();
+		mc.run(); */
 		
 		//Sudoku SA
-		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle1), 10000, 0.01, 1.0, 100);
+		SimulatedAnnealing sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle1), 10000, 0.01, 1.0, 100);
 		sa.run();
 		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle2), 10000, 0.01, 1.0, 100);
 		sa.run();
@@ -81,7 +81,7 @@ public class Main {
 		sa.run();
 		
 		//Sudoku MC
-		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle1), 10000, 1.0);
+		MinConflict mc = new MinConflict(new SudokuStateManager(sudokuPuzzle1), 10000, 1.0);
 		mc.run();
 		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle2), 10000, 1.0);
 		mc.run();
