@@ -91,7 +91,7 @@ public class GraphColorStateManager extends StateManager {
 	@Override
 	public void initState() {
 		for (int i = 0; i < values.length; i++) {
-			values[i] = getRandomConstrained();
+			values[i] = getRandomConstrained(i);
 
 		}
 	}
