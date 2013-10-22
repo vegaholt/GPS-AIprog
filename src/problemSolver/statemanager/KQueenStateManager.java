@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class KQueenStateManager extends StateManager {
 
 	public final int k;
-	private int[][] conflicts;
+	private int[][] minConflicts;
 
 	// Constructor blank state
 	public KQueenStateManager(int k) {
@@ -22,7 +22,7 @@ public class KQueenStateManager extends StateManager {
 		}
 		
 		//Init conflicts
-		this.conflicts = new int[k][k];
+		this.minConflicts = new int[k][k];
 		for (int i = 0; i < k; i++) {
 			addK(i, values[i]);
 		}
@@ -50,12 +50,17 @@ public class KQueenStateManager extends StateManager {
 
 	// Calculate conflicts
 	private int calculateConflicts() {
+		for (int i = 0; i < conflicts.length; i++) {
+			conflicts[i] = 0;
+		}
 		int newConflict = 0;
 		for (int i = 0; i < k; i++) {
 			for (int j = i + 1; j < k; j++) {
 				if (values[i] == values[j] || (values[i] - i == values[j] - j)
 						|| (-values[i] - i == -values[j] - j)) {
 					newConflict++;
+					conflicts[i]++;
+					conflicts[j]++;
 				}
 			}
 		}
@@ -76,7 +81,7 @@ public class KQueenStateManager extends StateManager {
 		int row = 0;
 		do {
 			row = (int) (Math.random() * k);
-		} while (conflicts[row][values[row]] == 0);
+		} while (minConflicts[row][values[row]] == 0);
 
 		// Removes K in this row
 		removeK(row);
@@ -84,8 +89,8 @@ public class KQueenStateManager extends StateManager {
 		// Find column with the lowest conflicts
 		int bestConflicts = k;
 		for (int i = 0; i < k; i++) {
-			if (conflicts[row][i] < bestConflicts) {
-				bestConflicts = conflicts[row][i];
+			if (minConflicts[row][i] < bestConflicts) {
+				bestConflicts = minConflicts[row][i];
 			}
 		}
 
@@ -93,7 +98,7 @@ public class KQueenStateManager extends StateManager {
 		ArrayList<Integer> places = new ArrayList<Integer>();
 
 		for (int i = 0; i < k; i++) {
-			if (conflicts[row][i] == bestConflicts) {
+			if (minConflicts[row][i] == bestConflicts) {
 				places.add(i);
 			}
 		}
@@ -118,9 +123,9 @@ public class KQueenStateManager extends StateManager {
 
 		// Remove conflict on columns
 		for (int j = 0; j < k; j++) {
-			conflicts[j][column] -= 1;
+			minConflicts[j][column] -= 1;
 		}
-		conflicts[row][column] += 1;
+		minConflicts[row][column] += 1;
 
 		// Remove conflict on diagonal-right
 		int startColumn = Math.max(0, column - row);
@@ -128,11 +133,11 @@ public class KQueenStateManager extends StateManager {
 
 		while (startColumn < k && startRow < k) {
 
-			conflicts[startRow][startColumn] -= 1;
+			minConflicts[startRow][startColumn] -= 1;
 			startColumn++;
 			startRow++;
 		}
-		conflicts[row][column] += 1;
+		minConflicts[row][column] += 1;
 
 		// Remove conflict on diagonal-left
 		startColumn = Math.min(k - 1, row + column);
@@ -140,11 +145,11 @@ public class KQueenStateManager extends StateManager {
 
 		while (startColumn >= 0 && startRow < k) {
 
-			conflicts[startRow][startColumn] -= 1;
+			minConflicts[startRow][startColumn] -= 1;
 			startColumn--;
 			startRow++;
 		}
-		conflicts[row][column] += 1;
+		minConflicts[row][column] += 1;
 	}
 
 	// Place K on the grid
@@ -154,9 +159,9 @@ public class KQueenStateManager extends StateManager {
 
 		// Add conflict on columns
 		for (int j = 0; j < k; j++) {
-			conflicts[j][column] += 1;
+			minConflicts[j][column] += 1;
 		}
-		conflicts[row][column] -= 1;
+		minConflicts[row][column] -= 1;
 
 		// Add conflict on diagonal-right
 		int startColumn = Math.max(0, column - row);
@@ -164,11 +169,11 @@ public class KQueenStateManager extends StateManager {
 
 		while (startColumn < k && startRow < k) {
 
-			conflicts[startRow][startColumn] += 1;
+			minConflicts[startRow][startColumn] += 1;
 			startColumn++;
 			startRow++;
 		}
-		conflicts[row][column] -= 1;
+		minConflicts[row][column] -= 1;
 
 		// Add conflict on diagonal-left
 		startColumn = Math.min(k - 1, row + column);
@@ -176,11 +181,11 @@ public class KQueenStateManager extends StateManager {
 
 		while (startColumn >= 0 && startRow < k) {
 
-			conflicts[startRow][startColumn] += 1;
+			minConflicts[startRow][startColumn] += 1;
 			startColumn--;
 			startRow++;
 		}
-		conflicts[row][column] -= 1;
+		minConflicts[row][column] -= 1;
 	}
 
 }
