@@ -9,7 +9,8 @@ public abstract class StateManager {
 	public int[] conflicts;
 	public boolean[] constrainedIndexes = null;
 	private int minValue, maxValue;
-
+	ArrayList<Integer> valueSwap = new ArrayList<Integer>();
+	
 	public StateManager() {
 		this.history = new LinkedList<StateManager.State>();
 	}
@@ -144,7 +145,7 @@ public abstract class StateManager {
 		return bestScore;
 	}
 	
-	ArrayList<Integer> valueSwap = new ArrayList<Integer>();
+	
 	public void swap() {
 		// Find node who is involved in a conflict
 		int index = 0;
