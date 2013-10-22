@@ -1,5 +1,6 @@
 package problemSolver.statemanager;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public abstract class StateManager {
@@ -143,6 +144,7 @@ public abstract class StateManager {
 		return bestScore;
 	}
 	
+	ArrayList<Integer> valueSwap = new ArrayList<Integer>();
 	public void swap() {
 		// Find node who is involved in a conflict
 		int index = 0;
@@ -151,21 +153,24 @@ public abstract class StateManager {
 			index = (int) (Math.random() * values.length);
 		} while (conflicts[index] == 0 || isConstrainedIndex(index));		
 		
-		int oldValue = values[index], bestConflict = conflicts[index], bestValue = oldValue;
-		for (int i = 0; i < maxValue; i++) {
+		valueSwap.clear();
+		int oldValue = values[index], bestConflict = conflicts[index]; //bestValue = oldValue;
+		valueSwap.add(oldValue);
+		for (int i = minValue; i < maxValue+1; i++) {
 			//Skip if same as old value
 			if (i == oldValue) continue;
 			
 			values[index] = i;
 			getStateValue();
 			int newConflict = conflicts[index];
-			if (newConflict < bestConflict) {
-				bestConflict = newConflict;
-				bestValue = i;
+			if (newConflict <= bestConflict) {
+				if(newConflict < bestConflict) valueSwap.clear();
+				else bestConflict = newConflict;
+				valueSwap.add(i);
 			}
 		}
 
-		values[index] = bestValue;
+		values[index] = valueSwap.get((int)(Math.random()*valueSwap.size()));
 	}
 
 
