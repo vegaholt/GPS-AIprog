@@ -62,7 +62,7 @@ public class SudokuStateManager extends StateManager {
 		}
 		System.out.println();
 	}
-/*
+
 	@Override
 	public int getRandomConstrained(int index) {
 
@@ -77,18 +77,10 @@ public class SudokuStateManager extends StateManager {
 				valueFrequency[values[i]]++;
 		}
 
-		// Iterer colonne
-		startPoint = index % size;
-		
-		for (int i = startPoint; i < size * size; i += size) {
-			if (i != index)
-				valueFrequency[values[i]]++;
-		}
-
 		//Choose lowest value
 		
 		int bestIndex = 1;
-		int bestValue = 9;
+		int bestValue = size;
 		
 		for (int i = 1; i < valueFrequency.length; i++) {
 			if(valueFrequency[i]<bestValue){
@@ -96,9 +88,8 @@ public class SudokuStateManager extends StateManager {
 				bestValue = valueFrequency[i];
 			}
 		}
-		
-		return bestIndex ;
-	}*/
+		return bestIndex;
+	}
 
 	public void initState() {
 		for (int i = 0; i < values.length; i++) {
