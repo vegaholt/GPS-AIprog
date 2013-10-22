@@ -29,11 +29,10 @@ public class SudokuStateManager extends StateManager {
 	public double getStateValue() {
 		calculateConflicts();
 		// System.out.println(sumConflicts*1.0 / (3 * size * size));
-		return 1.0 - 1.0 * sumConflicts / (3 * size * size);
+		return Math.max(0, 1.0 - 1.0 * sumConflicts / (3 * size * size));
 	}
 
 	public void printState() {
-		System.out.println("Map");
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				System.out.print(values[i * size + j] + " ");
@@ -53,17 +52,6 @@ public class SudokuStateManager extends StateManager {
 					System.out.print("1 ");
 				else
 					System.out.print("0 ");
-			}
-			System.out.println();
-		}
-		System.out.println();
-	}
-
-	public void printConflicts() {
-		System.out.println("Conflicts");
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				System.out.print(conflicts[i * size + j] + " ");
 			}
 			System.out.println();
 		}
