@@ -1,77 +1,30 @@
 package problemSolver.statemanager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SudokuStateManager extends StateManager {
-
-	@Override
-	public void swap() {
-		//Finn node i konflikt
-		int nodeId = 0;
-		
-		do{
-			nodeId = values[(int) (Math.random() * size*size)];
-			
-		}while(isConstrainedIndex(nodeId));
-		
-		//Velg (value) for node
-		int value = fixedConstrains[nodeId].getRandom();
-		
-		values[nodeId] = value;
-		
-		
-		//Iterer rad, col, sub section
-		
-		int startRow = (nodeId/size)*size;
-		int startCol = nodeId%size;
-		
-		
-		//Row
-		for(int i = startRow; i < startRow + size; i++){
-			if(i!=nodeId){
-				values[i] = fixedConstrains[i].getDifferentValue(value);				
-			}
-		}
-		
-		//Col
-		for(int i = startCol; i < size * size; i+= size){
-			if(i!=nodeId){
-				values[i] = fixedConstrains[i].getDifferentValue(value);				
-			}
-		}
-		
-		startRow = (nodeId/size)*size;
-		startCol = (((nodeId%size)/bulkSize)*bulkSize);
-		int index;
-		
-		//Sub section
-		for (int i = startRow; i < startRow + bulkSize; i++) {
-			for (int j = startCol; j < startCol + bulkSize; j++) {
-				index = i*size + j;
-				if(index!=nodeId){
-					values[index] = fixedConstrains[index].getDifferentValue(value);
-				}
-			}
-		}
-	}
-
+	//Size of board
 	public int size;
+	//Size of bulk = sqrt(size)
 	public int bulkSize;
-	public int sumConflicts;
-	public int[] valueFrequency;
-	public FixedConstrains[] fixedConstrains;
-
+	//Number of current conflicts on board
+	private int sumConflicts;
+	//Constrains for each of the sudoku squares
+	private FixedConstrains[] fixedConstrains;
+	//Counter used in checking conflicts
+	private int[] valueCount = new int[10];
+	/**
+	 * Sudoku constructor
+	 * @param puzzle k*k array with 0 for not fixed value and 1-k for fixed
+	 */
 	public SudokuStateManager(int[][] puzzle) {
 		size = puzzle.length;
 		bulkSize = (int) Math.sqrt(puzzle.length);
 		setValueConstrains(1, size);
 		setValuesSize(size * size);
 
-		valueFrequency = new int[size + 1];
-
 		this.constrainedIndexes = new boolean[values.length];
-
+		
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				values[i * size + j] = puzzle[i][j];
@@ -84,24 +37,21 @@ public class SudokuStateManager extends StateManager {
 		for (int i = 0; i < fixedConstrains.length; i++) {
 			fixedConstrains[i] = new FixedConstrains(size);
 		}
-		checkFixedConstraints();
-
-		for (int i = 0; i < puzzle.length; i++) {
-			for (int j = 0; j < puzzle.length; j++) {
-				FixedConstrains f = fixedConstrains[i * size + j];
-				for (Integer integer : f) {
-					System.out.print("" + integer);
-				}
-				System.out.print("  ");
+		initFixedConstraints();
+	}
+	
+	/**
+	 * Inits state with random constraind value for index
+	 */
+	public void initState() {
+		for (int i = 0; i < values.length; i++) {
+			if (!constrainedIndexes[i]) {
+				values[i] = fixedConstrains[i].getRandom();
 			}
-			System.out.println();
 		}
-
-		// Initiate fields
-		sumConflicts = 0;
 	}
 
-	private void checkFixedConstraints() {
+	private void initFixedConstraints() {
 
 		boolean hasChanged = true;
 		while (hasChanged) {
@@ -140,12 +90,15 @@ public class SudokuStateManager extends StateManager {
 			}
 		}
 	}
-
+	
+	/**
+	 * value = 1- currentConflicts / maxConflicts
+	 * maxConflict = size * (max conflicts for row/col/bulk, size -1 ) * 3
+	 */
 	public double getStateValue() {
 		calculateConflicts();
-		// System.out.println(sumConflicts*1.0 / (3 * size * size));
 		return 1.0 - 1.0 * sumConflicts
-				/ (size * size * size * size * size);
+				/ (size*(size-3)*3);
 	}
 
 	public void printState() {
@@ -159,66 +112,112 @@ public class SudokuStateManager extends StateManager {
 
 		System.out.println("Score:" + getStateValue());
 	}
-
-	public void printFixed() {
-		System.out.println("Fixed values");
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				if (constrainedIndexes[i * size + j])
-					System.out.print("1 ");
-				else
-					System.out.print("0 ");
-			}
-			System.out.println();
-		}
-		System.out.println();
-	}
-
-//	@Override
-//	public int getRandomConstrained(int index) {
-//		// if(index == size*3+size-3)
-//		// System.out.println("Random:"+index+"->"+
-//		// fixedConstrains[index].getRandom()+" value:"+values[index]);
-//		// checkFixedConstraints();
-//		// System.out.println( fixedConstrains[index].getRandom());
-//		return fixedConstrains[index].getRandom();
-//	}
-
-	public void initState() {
-		for (int i = 0; i < values.length; i++) {
-			if (!constrainedIndexes[i])
-				values[i] = 1;
-		}
-	}
-
+	/**
+	 * Calulates conflicts for the whole board and each square
+	 */
 	private void calculateConflicts() {
 		sumConflicts = 0;
-		for (int i = 0; i < values.length; i++) {
-			conflicts[i] = 0;
-			int radIndex = (int) Math.floor(i / size);
-			int colIndex = i % size;
-
-			for (int k = radIndex * size, to = radIndex * size + size; k < to; k++) {
-				if (k != i && values[i] == values[k])
-					conflicts[i]++;
+		//Resets value counter
+		for (int i = 0; i < valueCount.length; i++) {
+			valueCount[i] = 0;
+		}
+		for (int i = 0; i < values.length; i += size) {
+			//Loops over the each element in row increasing the counter for the value
+			for (int j = i; j < i + size; j++) {
+				//Increases valuecounter
+				valueCount[values[j]]++;
 			}
-
-			for (int j = colIndex; j < values.length; j += size) {
-				if (j != i && values[i] == values[j])
-					conflicts[i]++;
+			//Loops over each element setting their respective conflict given their value
+			for (int j = i; j < i + size; j++) {
+				conflicts[j] = Math.max(0, valueCount[values[j]] - 1);
 			}
+			//Sums up number of conflicts 
+			sumConflicts += sumValueConflict();
+		}
 
-			int startIndex = i - (radIndex % bulkSize) * size - colIndex
-					% bulkSize, bulkLength = startIndex + size * (bulkSize - 1)
-					+ bulkSize;
-			for (int k = startIndex; k < bulkLength; k += size) {
-				for (int k2 = 0; k2 < bulkSize; k2++) {
-					int index = k + k2;
-					if (i != index && values[i] == values[index])
-						conflicts[i]++;
+		for (int i = 0; i < size; i++) {
+			for (int j = i; j < values.length; j += size) {
+				valueCount[values[j]]++;
+			}
+			for (int j = i; j < values.length; j += size) {
+				conflicts[j] += Math.max(0, valueCount[values[j]] - 1);
+			}
+			sumConflicts += sumValueConflict();
+		}
+
+		for (int i = 0; i < bulkSize; i++) {
+			for (int j = 0; j < bulkSize; j++) {
+				for (int rad = 0; rad < bulkSize; rad++) {
+					int startIndex = i * bulkSize * size + rad * size + j
+							* bulkSize;
+					int end = startIndex + bulkSize;
+					for (int index = startIndex; index < end; index++) {
+						valueCount[values[index]]++;
+					}
+				}
+
+				for (int rad = 0; rad < bulkSize; rad++) {
+					int startIndex = i * bulkSize * size + rad * size + j
+							* bulkSize;
+					int end = startIndex + bulkSize;
+					for (int index = startIndex; index < end; index++) {
+						conflicts[index] += Math.max(0,
+								valueCount[values[index]] - 1);
+					}
+				}
+				sumConflicts += sumValueConflict();
+			}
+		}
+	}
+
+	private int sumValueConflict() {
+		int sum = 0;
+		for (int i = 1; i < valueCount.length; i++) {
+			sum += Math.max(0, valueCount[i] - 1);
+			valueCount[i] = 0;
+		}
+
+		return sum;
+	}
+	
+	@Override
+	public void swap() {
+		swapIndex(getRandomWithConflict());
+	}
+
+	private void swapIndex(int nodeId) {
+		
+		values[nodeId] = getBestSwap(nodeId, fixedConstrains[nodeId]);		
+
+		// Iterer rad, col, sub section
+		// System.out.println(nodeId);
+		int startRow = (nodeId / size);
+		int startCol = nodeId % size;
+
+		for (int i = startRow * size, to = startRow * size + size; i < to; i++) {
+			if (i != nodeId && values[i] == values[nodeId]) {
+				values[i] = fixedConstrains[i].getDifferentValue(values[nodeId]);
+			}
+		}
+
+		for (int i = startCol; i < values.length; i += size) {
+			if (i != nodeId && values[i] == values[nodeId]) {
+				values[i] = fixedConstrains[i].getDifferentValue(values[nodeId]);
+			}
+		}
+
+		int index;
+		int startIndex = nodeId - (startRow % bulkSize) * size - startCol
+				% bulkSize, bulkLength = startIndex + size * (bulkSize - 1)
+				+ bulkSize;
+		for (int k = startIndex; k < bulkLength; k += size) {
+			for (int k2 = 0; k2 < bulkSize; k2++) {
+				index = k + k2;
+				if (index != nodeId && values[index] == values[nodeId]) {
+					values[index] = fixedConstrains[index]
+							.getDifferentValue(values[nodeId]);
 				}
 			}
-			sumConflicts += conflicts[i];
 		}
 	}
 
@@ -241,31 +240,15 @@ public class SudokuStateManager extends StateManager {
 		public int getRandom() {
 			return this.get((int) (Math.random() * this.size()));
 		}
-		
-		public int getDifferentValue(int value){
-			
+
+		public int getDifferentValue(int value) {
+
 			int chosenValue = 0;
-			do{
-				chosenValue = this.get((int) (Math.random() * this.size()));
-			}while(chosenValue!=value);
-			
+			do {
+				chosenValue = getRandom();
+			} while (chosenValue == value);
+
 			return chosenValue;
 		}
 	}
-
-	// public static void main(String[] args){
-	// SudokuStateManager s = new SudokuStateManager(new int[][]
-	// {{0, 0, 0, 0, 4, 2, 0, 0, 8},
-	// {0, 4, 0, 3, 0, 0, 2, 7, 0},
-	// {0, 5, 6, 7, 0, 0, 0, 0, 3},
-	// {3, 0, 0, 0, 0, 0, 0, 0, 1},
-	// {0, 9, 1, 8, 0, 3, 5, 6, 0},
-	// {6, 0, 0, 0, 0, 0, 0, 0, 9},
-	// {5, 0, 0, 0, 0, 7, 1, 3, 0},
-	// {0, 6, 7, 0, 0, 5, 0, 8, 0},
-	// {8, 0, 0, 2, 6, 0, 0, 0, 0}});
-	//
-	// s.printState();
-	// s.printFixed();
-	// }
 }

@@ -9,7 +9,8 @@ public abstract class StateManager {
 	public int[] conflicts;
 	public boolean[] constrainedIndexes = null;
 	private int minValue, maxValue;
-	ArrayList<Integer> valueSwap = new ArrayList<Integer>();
+	private final ArrayList<Integer> legalValues = new ArrayList<Integer>(), 
+	valueSwap = new ArrayList<Integer>();
 	
 	public StateManager() {
 		this.history = new LinkedList<StateManager.State>();
@@ -24,6 +25,11 @@ public abstract class StateManager {
 	public void setValueConstrains(int minValue, int maxValue) {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
+		if(maxValue-minValue < 10000){
+			for(int i = 0; i < maxValue-minValue; i++){
+				legalValues.add(minValue+i);
+			}
+		}
 	}
 
 	/**
@@ -148,16 +154,19 @@ public abstract class StateManager {
 	
 	public void swap() {
 		// Find node who is involved in a conflict
-		int index = 0;
 		getStateValue();
-		do {
-			index = (int) (Math.random() * values.length);
-		} while (conflicts[index] == 0 || isConstrainedIndex(index));		
+		int index = getRandomWithConflict();
 		
+		
+
+		values[index] = getBestSwap(index,legalValues);
+	}
+	
+	public int getBestSwap(int index, ArrayList<Integer> swapValues){
 		valueSwap.clear();
 		int oldValue = values[index], bestConflict = conflicts[index]; //bestValue = oldValue;
 		valueSwap.add(oldValue);
-		for (int i = minValue; i < maxValue+1; i++) {
+		for (Integer i: swapValues) {
 			//Skip if same as old value
 			if (i == oldValue) continue;
 			
@@ -166,12 +175,21 @@ public abstract class StateManager {
 			int newConflict = conflicts[index];
 			if (newConflict <= bestConflict) {
 				if(newConflict < bestConflict) valueSwap.clear();
-				else bestConflict = newConflict;
+				bestConflict = newConflict;
 				valueSwap.add(i);
 			}
 		}
-
-		values[index] = valueSwap.get((int)(Math.random()*valueSwap.size()));
+		
+		return valueSwap.get((int)(Math.random()*valueSwap.size()));
+	}
+	
+	public int getRandomWithConflict(){
+		int index;
+		do {
+			index = (int) (Math.random() * values.length);
+		} while (conflicts[index] == 0 || isConstrainedIndex(index));	
+		
+		return index;
 	}
 
 
