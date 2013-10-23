@@ -20,34 +20,37 @@ public class SudokuStateManager extends StateManager {
 		
 		values[nodeId] = value;
 		
+		
 		//Iterer rad, col, sub section
-		for (int i = 0; i < values.length; i++) {
-			
-			int radIndex = (int) Math.floor(i / size);
-			int colIndex = i % size;
-			
-			//Rad
-			for (int k = radIndex * size, to = radIndex * size + size; k < to; k++) {
-				if (k != i && values[i] == values[k])
-					values[i] = fixedConstrains[i].getDifferentValue(value);
+		
+		int startRow = (nodeId/size)*size;
+		int startCol = nodeId%size;
+		
+		
+		//Row
+		for(int i = startRow; i < startRow + size; i++){
+			if(i!=nodeId){
+				values[i] = fixedConstrains[i].getDifferentValue(value);				
 			}
-			
-			//Col
-			for (int j = colIndex; j < values.length; j += size) {
-				if (j != i && values[i] == values[j])
-					values[i] = fixedConstrains[i].getDifferentValue(value);
+		}
+		
+		//Col
+		for(int i = startCol; i < size * size; i+= size){
+			if(i!=nodeId){
+				values[i] = fixedConstrains[i].getDifferentValue(value);				
 			}
-			
-			//Sub section
-			int startIndex = i - (radIndex % bulkSize) * size - colIndex
-					% bulkSize, bulkLength = startIndex + size * (bulkSize - 1)
-					+ bulkSize;
-			for (int k = startIndex; k < bulkLength; k += size) {
-				for (int k2 = 0; k2 < bulkSize; k2++) {
-					int index = k + k2;
-					if (i != index && values[i] == values[index])
-						
-						values[i] = fixedConstrains[i].getDifferentValue(value);
+		}
+		
+		startRow = (nodeId/size)*size;
+		startCol = (((nodeId%size)/bulkSize)*bulkSize);
+		int index;
+		
+		//Sub section
+		for (int i = startRow; i < startRow + bulkSize; i++) {
+			for (int j = startCol; j < startCol + bulkSize; j++) {
+				index = i*size + j;
+				if(index!=nodeId){
+					values[index] = fixedConstrains[index].getDifferentValue(value);
 				}
 			}
 		}

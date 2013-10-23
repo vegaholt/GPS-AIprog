@@ -83,19 +83,19 @@ public class Main {
 		mc.run(); */
 		
 		//Sudoku SA
-		SimulatedAnnealing sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle1), 10000, 0.01, 1.0, 100);
-		sa.run();
-		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle2), 10000, 0.01, 1.0, 100);
+		SimulatedAnnealing sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle2), 10000, 0.01, 1.0, 100);
 		sa.run();
 		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle3), 10000, 0.01, 1.0, 100);
 		sa.run();
+		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle4), 10000, 0.01, 1.0, 100);
+		sa.run();
 		
 		//Sudoku MC
-		MinConflict mc = new MinConflict(new SudokuStateManager(sudokuPuzzle1), 10000, 1.0);
-		mc.run();
-		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle2), 10000, 1.0);
+		MinConflict mc = new MinConflict(new SudokuStateManager(sudokuPuzzle2), 10000, 1.0);
 		mc.run();
 		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle3), 10000, 1.0);
+		mc.run();
+		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle4), 10000, 1.0);
 		mc.run();
 			
 	}
