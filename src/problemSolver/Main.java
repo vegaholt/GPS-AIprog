@@ -19,17 +19,24 @@ public class Main {
 							   		       {0, 6, 7, 0, 0, 5, 0, 8, 0},
 							   		       {8, 0, 0, 2, 6, 0, 0, 0, 0}};
 		
-	public static int[][] sudokuPuzzle2 = {{8, 0, 0, 7, 5, 0, 0, 3, 0},
-										   {9, 0, 0, 4, 0, 1, 5, 2, 0},
-										   {0, 0, 0, 0, 3, 0, 0, 6, 0},
-										   {7, 0, 0, 0, 0, 0, 6, 4, 0},
-										   {0, 0, 0, 0, 0, 0, 0, 0, 0},
-										   {0, 8, 3, 0, 0, 0, 0, 0, 2},
-										   {0, 7, 0, 0, 4, 0, 0, 0, 0},
-										   {0, 4, 8, 2, 0, 9, 0, 0, 6},
-										   {0, 9, 0, 0, 1, 8, 0, 0, 5}};
+	public static int[][] sudokuPuzzle3 = {{4, 12, 0, 0, 0, 0, 5, 10, 0, 0, 0, 16, 0, 0, 8, 0},
+											{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 13, 0},
+											{7, 0, 15, 0, 16, 3, 0, 9, 13, 5, 0, 0, 2, 0, 11, 0},
+											{3, 0, 13, 10, 0, 0, 0, 11, 0, 0, 0, 6, 9, 0, 12, 0},
+											{2, 0, 9, 4, 0, 0, 16, 0, 0, 0, 8, 0, 12, 0, 6, 0},
+											{0, 0, 0, 12, 2, 0, 10, 8, 0, 0, 4, 0, 0, 0, 0, 16},
+											{0, 0, 10, 0, 12, 0, 6, 7, 2, 0, 0, 15, 0, 8, 0, 0},
+											{0, 15, 6, 8, 0, 0, 0, 14, 0, 0, 5, 3, 0, 0, 2, 0},
+											{0, 5, 0, 0, 10, 12, 0, 0, 9, 0, 0, 0, 16, 4, 1, 0},
+											{0, 0, 11, 0, 14, 0, 0, 5, 4, 12, 0, 10, 0, 9, 0, 0},
+											{12, 0, 0, 0, 0, 7, 0, 0, 5, 3, 0, 11, 14, 0, 0, 0},
+											{0, 10, 0, 9, 0, 16, 0, 0, 0, 15, 0, 0, 8, 12, 0, 7},
+											{0, 1, 0, 11, 13, 0, 0, 0, 3, 0, 0, 0, 5, 14, 0, 9},
+											{0, 14, 0, 13, 0, 0, 9, 4, 16, 0, 15, 1, 0, 2, 0, 6},
+											{0, 9, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+											{0, 7, 0, 0, 11, 0, 0, 0, 6, 13, 0, 0, 0, 0, 4, 8}};
 	
-	public static int[][] sudokuPuzzle3 = {{0, 0, 0, 0, 1, 0, 0, 9, 4},
+	public static int[][] sudokuPuzzle2 = {{0, 0, 0, 0, 1, 0, 0, 9, 4},
 										   {0, 6, 0, 7, 0, 0, 5, 0, 0},
 										   {0, 2, 0, 0, 0, 0, 0, 3, 0},
 										   {5, 9, 0, 0, 0, 2, 0, 0, 0},
@@ -38,10 +45,11 @@ public class Main {
 										   {0, 8, 0, 0, 0, 0, 0, 5, 0},
 										   {0, 0, 4, 0, 0, 3, 0, 8, 0},
 										   {6, 1, 0, 0, 8, 0, 0, 0, 0}};
+	
 
 	public static void main(String[] args) {
 
-		/*//KQueens SA
+		//KQueens SA
 		SimulatedAnnealing sa = new SimulatedAnnealing(new KQueenStateManager(8), 10000, 0.01, 1.0, 30);
 		sa.run();
 		sa = new SimulatedAnnealing(new KQueenStateManager(25), 10000, 0.01, 1.0, 30);
@@ -71,22 +79,22 @@ public class Main {
 		mc = new MinConflict(new GraphColorStateManager(2), 10000, 1.0);
 		mc.run();
 		mc = new MinConflict(new GraphColorStateManager(3), 10000, 1.0);
-		mc.run(); */
+		mc.run(); 
 		
 		//Sudoku SA
-		SimulatedAnnealing sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle2), 10000, 0.01, 1.0, 100);
+		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle1), 10000, 0.01, 1.0, 100);
+		sa.run();
+		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle2), 10000, 0.01, 1.0, 100);
 		sa.run();
 		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle3), 10000, 0.01, 1.0, 100);
 		sa.run();
-		sa = new SimulatedAnnealing(new SudokuStateManager(sudokuPuzzle4), 10000, 0.01, 1.0, 100);
-		sa.run();
 		
 		//Sudoku MC
-		MinConflict mc = new MinConflict(new SudokuStateManager(sudokuPuzzle2), 10000, 1.0);
+		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle1), 10000, 1.0);
+		mc.run();
+		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle2), 10000, 1.0);
 		mc.run();
 		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle3), 10000, 1.0);
-		mc.run();
-		mc = new MinConflict(new SudokuStateManager(sudokuPuzzle4), 10000, 1.0);
 		mc.run();
 			
 	}
