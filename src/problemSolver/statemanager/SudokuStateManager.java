@@ -5,6 +5,54 @@ import java.util.Arrays;
 
 public class SudokuStateManager extends StateManager {
 
+	@Override
+	public void swap() {
+		//Finn node i konflikt
+		int nodeId = 0;
+		
+		do{
+			nodeId = values[(int) (Math.random() * size*size)];
+			
+		}while(isConstrainedIndex(nodeId));
+		
+		//Velg (value) for node
+		int value = fixedConstrains[nodeId].getRandom();
+		
+		values[nodeId] = value;
+		
+		//Iterer rad, col, sub section
+		for (int i = 0; i < values.length; i++) {
+			
+			int radIndex = (int) Math.floor(i / size);
+			int colIndex = i % size;
+			
+			//Rad
+			for (int k = radIndex * size, to = radIndex * size + size; k < to; k++) {
+				if (k != i && values[i] == values[k])
+					values[i] = fixedConstrains[i].getDifferentValue(value);
+			}
+			
+			//Col
+			for (int j = colIndex; j < values.length; j += size) {
+				if (j != i && values[i] == values[j])
+					values[i] = fixedConstrains[i].getDifferentValue(value);
+			}
+			
+			//Sub section
+			int startIndex = i - (radIndex % bulkSize) * size - colIndex
+					% bulkSize, bulkLength = startIndex + size * (bulkSize - 1)
+					+ bulkSize;
+			for (int k = startIndex; k < bulkLength; k += size) {
+				for (int k2 = 0; k2 < bulkSize; k2++) {
+					int index = k + k2;
+					if (i != index && values[i] == values[index])
+						
+						values[i] = fixedConstrains[i].getDifferentValue(value);
+				}
+			}
+		}
+	}
+
 	public int size;
 	public int bulkSize;
 	public int sumConflicts;
@@ -189,6 +237,16 @@ public class SudokuStateManager extends StateManager {
 
 		public int getRandom() {
 			return this.get((int) (Math.random() * this.size()));
+		}
+		
+		public int getDifferentValue(int value){
+			
+			int chosenValue = 0;
+			do{
+				chosenValue = this.get((int) (Math.random() * this.size()));
+			}while(chosenValue!=value);
+			
+			return chosenValue;
 		}
 	}
 
