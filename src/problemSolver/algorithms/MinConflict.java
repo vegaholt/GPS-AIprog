@@ -1,7 +1,5 @@
 package problemSolver.algorithms;
 
-import java.util.HashMap;
-
 import problemSolver.statemanager.StateManager;
 
 public class MinConflict extends SearchAlgorithm {
@@ -16,7 +14,7 @@ public class MinConflict extends SearchAlgorithm {
 		this.acceptanceValue = acceptanceValue;
 	}
 
-	public HashMap<String,String> solve() {
+	public void solve() {
 		System.out.println("Min conflicts");
 		// Counter
 		int counter = 0;
@@ -34,12 +32,10 @@ public class MinConflict extends SearchAlgorithm {
 		System.out.println("Solution found after " + counter + " iterations");
 		
 		//Adding stats to be printed
-		HashMap<String, String> stats = new HashMap<String, String>();
-		stats.put("Max iterations", String.valueOf(iterationCount));
-		stats.put("Used iterations", String.valueOf(counter));
-		stats.put("Wanted score", String.valueOf(acceptanceValue*100)+"%");
-		stats.put("Got score",  String.format("%.2f", conflicts*100)+"%");
+		addStats("Max iterations", iterationCount, "");
+		addStats("Used iterations",counter, "");
+		addStats("Wanted score",(float)acceptanceValue*100,"%");
+		addStats("Got score",  (float)conflicts*100,"%");
 		
-		return stats;
 	}
 }

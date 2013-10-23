@@ -12,7 +12,7 @@ public class SudokuStateManager extends StateManager {
 	//Constrains for each of the sudoku squares
 	private FixedConstrains[] fixedConstrains;
 	//Counter used in checking conflicts
-	private int[] valueCount = new int[10];
+	private int[] valueCount;
 	/**
 	 * Sudoku constructor
 	 * @param puzzle k*k array with 0 for not fixed value and 1-k for fixed
@@ -32,7 +32,7 @@ public class SudokuStateManager extends StateManager {
 					constrainedIndexes[i * size + j] = true;
 			}
 		}
-
+		valueCount = new int[size+1];
 		fixedConstrains = new FixedConstrains[values.length];
 		for (int i = 0; i < fixedConstrains.length; i++) {
 			fixedConstrains[i] = new FixedConstrains(size);
@@ -182,11 +182,7 @@ public class SudokuStateManager extends StateManager {
 	
 	@Override
 	public void swap() {
-		swapIndex(getRandomWithConflict());
-	}
-
-	private void swapIndex(int nodeId) {
-		
+		int nodeId = getRandomWithConflict();
 		values[nodeId] = getBestSwap(nodeId, fixedConstrains[nodeId]);		
 
 		// Iterer rad, col, sub section
@@ -221,6 +217,7 @@ public class SudokuStateManager extends StateManager {
 		}
 	}
 
+	@SuppressWarnings("serial")
 	class FixedConstrains extends ArrayList<Integer> {
 		public FixedConstrains(int size) {
 			for (int i = 0; i < size; i++) {

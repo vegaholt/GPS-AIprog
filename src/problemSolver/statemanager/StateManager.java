@@ -26,7 +26,7 @@ public abstract class StateManager {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 		if(maxValue-minValue < 10000){
-			for(int i = 0; i < maxValue-minValue; i++){
+			for(int i = 0; i < maxValue-minValue+1; i++){
 				legalValues.add(minValue+i);
 			}
 		}

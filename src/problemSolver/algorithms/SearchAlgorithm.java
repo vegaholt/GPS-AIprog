@@ -1,17 +1,22 @@
 package problemSolver.algorithms;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import problemSolver.RunStats;
 import problemSolver.statemanager.StateManager;
 
 public abstract class SearchAlgorithm {
 	public final StateManager P;
+	public final ArrayList<RunStats> stats;
 
 	public SearchAlgorithm(StateManager P) {
 		this.P = P;
+		this.stats = new ArrayList<RunStats>();
 	}
 
-	public HashMap<String, String> run() {
+	public ArrayList<RunStats> run() {
+		stats.clear();
 		// Start timer
 		long time = System.currentTimeMillis();
 
@@ -24,20 +29,24 @@ public abstract class SearchAlgorithm {
 		P.printState();
 
 		// Run algorithm
-		HashMap<String, String> stats = this.solve();
+		this.solve();
 
 		// Display solution
 		System.out.println("---Final solution---");
 		P.printState();
 		
 		time = System.currentTimeMillis() - time;
-		stats.put("Time used", String.valueOf(time)+"ms");
+		this.addStats("Time used", time, "ms");
 		// Display runtime
 		System.out.println("Runtime: "+ time + " milliseconds");
 		System.out.println();
 
-		return stats;
+		return this.stats;
 	}
-
-	protected abstract HashMap<String, String> solve();
+	
+	protected void addStats(String label, float value, String extendsion){
+		stats.add(new RunStats(label, value, extendsion));
+	}
+	
+	protected abstract void solve();
 }
