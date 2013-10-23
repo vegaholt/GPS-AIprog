@@ -1,5 +1,7 @@
 package problemSolver.algorithms;
 
+import java.util.HashMap;
+
 import problemSolver.statemanager.StateManager;
 
 public abstract class SearchAlgorithm {
@@ -9,9 +11,9 @@ public abstract class SearchAlgorithm {
 		this.P = P;
 	}
 
-	public void run() {
+	public HashMap<String, String> run() {
 		// Start timer
-		long time = System.nanoTime();
+		long time = System.currentTimeMillis();
 
 		// Initiate state
 		P.makeStatePermanent();
@@ -22,18 +24,20 @@ public abstract class SearchAlgorithm {
 		P.printState();
 
 		// Run algorithm
-		this.solve();
+		HashMap<String, String> stats = this.solve();
 
 		// Display solution
 		System.out.println("---Final solution---");
 		P.printState();
-
+		
+		time = System.currentTimeMillis() - time;
+		stats.put("Time used", String.valueOf(time)+"ms");
 		// Display runtime
-		System.out.println("Runtime: "
-				+ ((System.nanoTime() - time) / 1000000f) + " milliseconds");
+		System.out.println("Runtime: "+ time + " milliseconds");
 		System.out.println();
 
+		return stats;
 	}
 
-	protected abstract void solve();
+	protected abstract HashMap<String, String> solve();
 }

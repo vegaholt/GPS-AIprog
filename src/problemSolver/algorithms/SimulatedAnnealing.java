@@ -1,6 +1,8 @@
 package problemSolver.algorithms;
 
 
+import java.util.HashMap;
+
 import problemSolver.statemanager.StateManager;
 
 public class SimulatedAnnealing extends SearchAlgorithm {
@@ -19,7 +21,7 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 		this.neighbourCount = neighbourCount;
 	}
 
-	public void solve() {
+	public HashMap<String, String> solve() {
 		System.out.println("Simulated anealing");
 		double best = P.getStateValue(), current = best;
 		double temperature = this.temperature;
@@ -59,6 +61,17 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 		System.out
 				.printf("Average generate-neighbours: %f, Average other:%f iterations:%d\n",
 						generateN / 1000000f, other / 1000000f, n);
+		
+		//Adding stats to be printed
+		HashMap<String, String> stats = new HashMap<String, String>();
+		stats.put("Start temp", String.valueOf(this.temperature)+"*C");
+		stats.put("Reached temp", String.format("%.1f", temperature)+"*C");
+		stats.put("Iterations", String.valueOf(n));
+		stats.put("Wanted score", String.valueOf(acceptanceValue*100)+"%");
+		stats.put("Got score",  String.format("%.2f", best*100)+"%");
+		return stats;
+		
+		
 	}
 
 	private double acceptanceProbability(double current, double newScore,
@@ -72,7 +85,6 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 	}
 
 	private float getAverage(int n, float time, float oldAverage) {
-
 		return (oldAverage * (n - 1) + (System.nanoTime() - time)) / n;
 	}
 
