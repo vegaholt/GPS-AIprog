@@ -1,13 +1,13 @@
 package problemSolver.algorithms;
 
-
 import problemSolver.statemanager.StateManager;
 
 public class SimulatedAnnealing extends SearchAlgorithm {
-	public double temperature;
-	public double coolingRate;
-	public double acceptanceValue;
-	public int neighbourCount;
+	//Initial temp
+	public final double temperature;
+	public final double coolingRate;
+	public final double acceptanceValue;
+	public final int neighbourCount;
 
 	public SimulatedAnnealing(StateManager state, double temperature,
 			double coolingRate, double acceptanceValue, int neighbourCount) {
@@ -21,67 +21,55 @@ public class SimulatedAnnealing extends SearchAlgorithm {
 
 	public void solve() {
 		System.out.println("Simulated anealing");
-		double best = P.getStateValue(), current = best;
+		
+		//Sets the current and best score to the current board score
+		double best = stateManager.getStateValue(), current = best;
+		//Sets temperature to initial temp
 		double temperature = this.temperature;
-		float generateN = 0;
-		float other = 0;
-		int n = 1;
-		if(best >= acceptanceValue) return;
-		while (temperature > 1) { // Return solution if acceptable
-
-			long t = System.nanoTime();
-			double bestNeighbour = P.getBestNeighbour(neighbourCount,
+		int n = 0;
+		//Returns if the board is already has accepted score
+		if (best >= acceptanceValue)
+			return;
+		
+		//Iterates to problem has accepted score or temp < 1
+		while (temperature > 1) {
+			//Ask statemanager to generate neighbourCount neighbours and return the score of the best
+			double bestNeighbour = stateManager.getBestNeighbour(neighbourCount,
 					acceptanceValue);
-			generateN = getAverage(n, t, generateN);
 
-			t = System.nanoTime();
-
+			//CHeck if this is the best score.
 			if (bestNeighbour > best) {
 				best = bestNeighbour;
-				P.makeStatePermanent();
+				//Tells statemanager to remove all previous history and make this state final for now.
+				stateManager.makeStatePermanent();
+				//If best is accepted Score break;
 				if (best >= acceptanceValue)
 					break;
 			}
 
-			if (acceptanceProbability(current, bestNeighbour, temperature) > Math
+			//Checks if the new score is acceptable compared to the previous accepted score score
+			//If so set previous accepted score to new score
+			//Else revert board to the previous state
+			if (Math.exp((bestNeighbour - current) / temperature) > Math
 					.random()) {
 				current = bestNeighbour;
 			} else {
-				P.revertLast();
+				stateManager.revertLast();
 			}
-
-			other = getAverage(n, t, other);
-
+			
+			//Cool down
 			temperature *= 1 - coolingRate;
 			n++;
 		}
+		//Revert the board to the finale state made by calling makeStatePermanent()
+		stateManager.revertToBest();
 
-		P.revertToBest();
-		System.out
-				.printf("Average generate-neighbours: %f, Average other:%f iterations:%d\n",
-						generateN / 1000000f, other / 1000000f, n);
-		
-		//Adding stats to be printed
-		addStats("Start temp", (float)this.temperature, "*C");
-		addStats("Reached temp",(float)temperature , "*C");
-		addStats("Wanted score", (float)acceptanceValue*100 , "%");
-		addStats("Got Score",(float)best*100 , "%");
+		// Adding stats to be printed
+		addStats("Start temp", (float) this.temperature, "*C");
+		addStats("Reached temp", (float) temperature, "*C");
+		addStats("Wanted score", (float) acceptanceValue * 100, "%");
+		addStats("Got Score", (float) best * 100, "%");
 		addStats("Iterations", n, "n");
-		
-	}
-
-	private double acceptanceProbability(double current, double newScore,
-			double temp) {
-		// If better accept it
-		if (newScore > current) {
-			return 1.0;
-		}
-		// If the new solution is worse, calculate an acceptance probability
-		return Math.exp((newScore - current) / temp);
-	}
-
-	private float getAverage(int n, float time, float oldAverage) {
-		return (oldAverage * (n - 1) + (System.nanoTime() - time)) / n;
 	}
 
 }

@@ -1,17 +1,16 @@
 package problemSolver.algorithms;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import problemSolver.RunStats;
 import problemSolver.statemanager.StateManager;
 
 public abstract class SearchAlgorithm {
-	public final StateManager P;
+	public final StateManager stateManager;
 	public final ArrayList<RunStats> stats;
 
-	public SearchAlgorithm(StateManager P) {
-		this.P = P;
+	public SearchAlgorithm(StateManager stateManager) {
+		this.stateManager = stateManager;
 		this.stats = new ArrayList<RunStats>();
 	}
 
@@ -19,21 +18,22 @@ public abstract class SearchAlgorithm {
 		stats.clear();
 		// Start timer
 		long time = System.currentTimeMillis();
-
+		
+		//Empties history of statemanager
+		stateManager.makeStatePermanent();
 		// Initiate state
-		P.makeStatePermanent();
-		P.initState();
+		stateManager.initState();
 
 		// Display initial state
 		System.out.println("---Initial state---");
-		P.printState();
+		stateManager.printState();
 
 		// Run algorithm
 		this.solve();
 
 		// Display solution
 		System.out.println("---Final solution---");
-		P.printState();
+		stateManager.printState();
 		
 		time = System.currentTimeMillis() - time;
 		this.addStats("Time used", time, "ms");
@@ -43,10 +43,18 @@ public abstract class SearchAlgorithm {
 
 		return this.stats;
 	}
-	
+	/**
+	 * Adds running stats to stats list
+	 * @param label
+	 * @param value
+	 * @param extendsion
+	 */
 	protected void addStats(String label, float value, String extendsion){
 		stats.add(new RunStats(label, value, extendsion));
 	}
 	
+	/**
+	 * Tries to solve the problem given by the statemanger
+	 */
 	protected abstract void solve();
 }

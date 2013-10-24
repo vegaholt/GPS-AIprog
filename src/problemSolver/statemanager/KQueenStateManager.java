@@ -10,11 +10,12 @@ public class KQueenStateManager extends StateManager {
 	/**
 	 * Constructs a new state for KQueen
 	 * 
-	 * @param k board size
+	 * @param k number of queens and kxk board
 	 */
 	public KQueenStateManager(int k) {
 		super();
 		this.k = k;
+		//Set the value constrains to be between column = 0 and column = k-1
 		this.setValueConstrains(0, k - 1);
 		setValuesSize(k);
 	}
@@ -40,17 +41,6 @@ public class KQueenStateManager extends StateManager {
 	 * Displays the board, number of queens, number of conflicts and the state value
 	 */
 	public void printState() {
-		if (k <= 0) {
-			for (int i = 0; i < k; i++) {
-				for (int j = 0; j < k; j++) {
-					if (values[i] == j)
-						System.out.print("1 ");
-					else
-						System.out.print("0 ");
-				}
-				System.out.println("Queen index: " + values[i]);
-			}
-		}
 		System.out.println(k + "-Queens");
 		System.out.println("Conflicts: " + calculateConflicts());
 		System.out.println("Value: " + getStateValue());
@@ -62,9 +52,10 @@ public class KQueenStateManager extends StateManager {
 	 * @return sum of conflicts
 	 */
 	private int calculateConflicts() {
-		for (int i = 0; i < conflicts.length; i++) {
-			conflicts[i] = 0;
-		}
+		//Resets conflict counter for each element
+		for (int i = 0; i < conflicts.length; i++) conflicts[i] = 0;
+		
+		
 		int newConflict = 0;
 		for (int i = 0; i < k; i++) {
 			for (int j = i + 1; j < k; j++) {

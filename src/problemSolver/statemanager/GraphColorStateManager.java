@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class GraphColorStateManager extends StateManager {
+	//Neighbour list for nodes
 	public ArrayList<Integer[]> neighbours;
+	//Cordinates for nodes, only used for UI
 	public float[][] nodePositions;
 
 	public GraphColorStateManager(int fileId) {
@@ -23,13 +25,17 @@ public class GraphColorStateManager extends StateManager {
 		}
 
 	}
-
+	//Constructor used by ui because of other file reading method
 	public GraphColorStateManager(InputStream file) {
 		parseFile(file);
 	}
-
+	/**
+	 * Parses the txt file we where supplied
+	 * @param file
+	 */
 	private void parseFile(InputStream file) {
 		BufferedReader br = null;
+		//Inits a 
 		this.neighbours = new ArrayList<Integer[]>();
 		try {
 			br = new BufferedReader(new InputStreamReader(file));
@@ -43,34 +49,35 @@ public class GraphColorStateManager extends StateManager {
 
 			// int edgesLength = Integer.parseInt(split[1]);
 			nodePositions = new float[listLength][2];
-
+			
 			int lineNumber = 1;
 			ArrayList<ArrayList<Integer>> tmpNeightbours = new ArrayList<ArrayList<Integer>>();
-
+			//Loops over all the lines in the txt file
 			while ((line = br.readLine()) != null) {
-				// System.out.println(line+" parsingNodes:"+(lineNumber <=
-				// listLength));
 				split = line.split(" ");
+				//Gets node index
 				int index = Integer.parseInt(split[0]);
-
+				
+				//Check if this is node description 
+				//else its edge description
 				if (lineNumber <= listLength) {
+					//Gets position of this node
 					nodePositions[index][0] = Float.parseFloat(split[1]);
 					nodePositions[index][1] = Float.parseFloat(split[2]);
+					//Creates list to add neighbours in
 					tmpNeightbours.add(new ArrayList<Integer>());
+					//Adds empty element so the index exists when converting the complete tmpNeighbours to an int array
 					neighbours.add(null);
 				} else {
 					int index2 = Integer.parseInt(split[1]);
+					//Addds neighbour relations between node-index and node-index2
 					tmpNeightbours.get(index).add(index2);
 				}
 
 				lineNumber++;
-				// if (currentColor == 3) {
-				// currentColor = 0;
-				// } else {
-				// currentColor++;
-				// }
 			}
-
+			
+			//Converts tempNeigbours list to int array list
 			for (int i = 0; i < tmpNeightbours.size(); i++) {
 				neighbours
 						.set(i, tmpNeightbours.get(i).toArray(new Integer[0]));
@@ -90,6 +97,7 @@ public class GraphColorStateManager extends StateManager {
 
 	@Override
 	public void initState() {
+		//Initiates board by giving all nodes same color
 		for (int i = 0; i < values.length; i++) {
 			values[i] = getRandomConstrained(i);
 
@@ -99,18 +107,29 @@ public class GraphColorStateManager extends StateManager {
 	@Override
 	public void printState() {
 		System.out.println("Graph Coloring file: unknown");
-		System.out.println("Number of conflicts:" + getConflicts());
+		System.out.println("Number of conflicts:" + calculateConflicts());
 		System.out.println("Graph score:" + getStateValue());
 	}
+	
+	@Override
+	public double getStateValue() {
+		//Max conflicts = all nodes same color = number of nodes
+		//1-numberofConflicts/maxConflicts
+		return 1f - ((float) calculateConflicts() / values.length);
+	}
 
-	private int getConflicts() {
-		// Reset conflicts
+	private int calculateConflicts() {
+		// Reset conflicts counter
 		for (int i = 0; i < conflicts.length; i++) {
 			conflicts[i] = 0;
 		}
 
 		int sumCon = 0;
+		//Loops over all the nodes
 		for (int i = 0; i < neighbours.size(); i++) {
+			
+			//Loops over node-i neighbours, and checks if they have same color
+			//If same color then increas connflicts for both nodes and the total conflicts
 			for (int j = 0; j < neighbours.get(i).length; j++) {
 				if (values[i] == values[neighbours.get(i)[j]]) {
 					sumCon++;
@@ -120,11 +139,6 @@ public class GraphColorStateManager extends StateManager {
 			}
 		}
 		return sumCon;
-	}
-
-	@Override
-	public double getStateValue() {
-		return 1f - ((float) getConflicts() / values.length);
 	}
 
 }

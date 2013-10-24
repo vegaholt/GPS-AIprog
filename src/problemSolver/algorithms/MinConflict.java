@@ -3,9 +3,10 @@ package problemSolver.algorithms;
 import problemSolver.statemanager.StateManager;
 
 public class MinConflict extends SearchAlgorithm {
-
-	public int iterationCount;
-	public double acceptanceValue;
+	
+	//Max iterations to use
+	public final int iterationCount;
+	public final double acceptanceValue;
 
 	public MinConflict(StateManager P, int iterationCount,
 			double acceptanceValue) {
@@ -19,13 +20,13 @@ public class MinConflict extends SearchAlgorithm {
 		// Counter
 		int counter = 0;
 		// Get conflicts
-		double conflicts = P.getStateValue();
+		double conflicts = stateManager.getStateValue();
 
 		while (conflicts < acceptanceValue && counter < iterationCount) {
 			// Alter state
-			P.swap();
+			stateManager.swap();
 			// Update conditions
-			conflicts = P.getStateValue();
+			conflicts = stateManager.getStateValue();
 			counter++;
 		}
 		// Display iterations needed to solve the problem

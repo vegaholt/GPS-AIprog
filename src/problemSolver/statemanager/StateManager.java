@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public abstract class StateManager {
+	//Linked list for the history of state changes
 	final protected LinkedList<StateManager.State> history;
-	public int[] values;
-	public int[] conflicts;
+	//int array for state values and state conflicts
+	public int[] values, conflicts;
+	//array telling which indexes that can not be changed
 	public boolean[] constrainedIndexes = null;
+	//value constraints, only values
 	private int minValue, maxValue;
+	//Arraylist with values from minValue to maxValue, used to speed
+	//Also fix for sudoku using diffrent swapValues when calling getBestSwap()  
 	private final ArrayList<Integer> legalValues = new ArrayList<Integer>(), 
 	valueSwap = new ArrayList<Integer>();
 	
@@ -18,7 +23,6 @@ public abstract class StateManager {
 
 	/**
 	 * Set constrains for what values arrays value can be
-	 * 
 	 * @param minValue
 	 * @param maxValue
 	 */
@@ -34,8 +38,7 @@ public abstract class StateManager {
 
 	/**
 	 * Generates random int between minValue and maxValue
-	 * 
-	 * @return
+	 * @return random int between min and max
 	 */
 	public int getRandomConstrained(int index) {
 		return minValue
@@ -73,6 +76,9 @@ public abstract class StateManager {
 		history.clear();
 	}
 
+	/**
+	 * Reverst last state change by polling last history change
+	 */
 	public void revertLast() {
 		State s = history.poll();
 		if (s != null)
@@ -94,77 +100,79 @@ public abstract class StateManager {
 			values[state.index] = state.value;
 		}
 	}
-
-	/***
-	 * A History state
-	 * 
-	 * @author Nicolay
-	 * 
-	 */
-	class State {
-		public State(int index, int value) {
-			this.index = index;
-			this.value = value;
-		}
-
-		public int index;
-		public int value;
-	}
-
-	// Get a random neighbour
-	public void setRandomNeighbour() {
-		addChange((int) (Math.random() * values.length), getRandomConstrained(0));
-	}
 	
+	/**
+	 * Checks if given index is constrained of value change
+	 */
 	public boolean isConstrainedIndex(int index){
 		return constrainedIndexes != null && constrainedIndexes[index];
 	}
 
-	// Get the best neighbour
+	/**
+	 * Generates generateNNeigbours neighbours by changing one value.
+	 * Finds the best neighbour and applies the change
+	 * @param generateNNeigbours number of neighbours to generate
+	 * @param acceptedValue breaks the generate neighbours if score >= acceptedValue
+	 * @return the new score of the state
+	 */
 	public double getBestNeighbour(int generateNNeigbours, double acceptedValue) {
 		int bestValue = 0, bestIndex = 0, oldValue = 0;
 		double bestScore = 0, newScore = 0;
 		for (int i = 0; i < generateNNeigbours; i++) {
-			
 			int index;
+			//Gets random index that is not constrained
 			do{
 				index = (int) (Math.random() * values.length);
 			}while(isConstrainedIndex(index));
 			
+			//Gets random value 
 			int value = getRandomConstrained(index);
+			//Stores old value
 			oldValue = values[index];
+			//Sets new value
 			values[index] = value;
+			//Calculates new score
 			newScore = getStateValue();
 			// Revert change
 			values[index] = oldValue;
+			//If newScore is better than best store the change
 			if (newScore > bestScore) {
 				bestScore = newScore;
 				bestIndex = index;
 				bestValue = value;
+				//Check if this is acceptedvalue
 				if (newScore >= acceptedValue)
 					break;
 			}
 
 		}
-
+		
+		//Apply the best change found
 		addChange(bestIndex, bestValue);
 		return bestScore;
 	}
 	
-	
+	/**
+	 * Swaps random node with conflict 
+	 * with the value that give the node min conflicts
+	 */
 	public void swap() {
-		// Find node who is involved in a conflict
 		getStateValue();
+		// Find node who is involved in a conflict
 		int index = getRandomWithConflict();
-		
-		
-
+		//Gets best swap for this index
 		values[index] = getBestSwap(index,legalValues);
 	}
 	
+	/**
+	 * Checks which values of the swapvalues that give the node-index min conflicts
+	 * @param index of node
+	 * @param swapValues: values that can be test for node
+	 * @return
+	 */
 	public int getBestSwap(int index, ArrayList<Integer> swapValues){
 		valueSwap.clear();
-		int oldValue = values[index], bestConflict = conflicts[index]; //bestValue = oldValue;
+		int oldValue = values[index], bestConflict = conflicts[index];
 		valueSwap.add(oldValue);
 		for (Integer i: swapValues) {
 			//Skip if same as old value
@@ -183,6 +191,10 @@ public abstract class StateManager {
 		return valueSwap.get((int)(Math.random()*valueSwap.size()));
 	}
 	
+	/**
+	 * Returns a random not constrained index that has conflicts
+	 * @return
+	 */
 	public int getRandomWithConflict(){
 		int index;
 		do {
@@ -191,12 +203,37 @@ public abstract class StateManager {
 		
 		return index;
 	}
+	
 
-
+	/**
+	 * Initiates the state
+	 */
+	public abstract void initState();
+	/**
+	 * Returns a value between 0 or 1 for the for the current state
+	 * 1 meaning that the problem is solved
+	 * 0 meaning that the problem is in the worst state possible
+	 * @return
+	 */
 	public abstract double getStateValue();
 
+	/**
+	 * Prints state info for puzzel
+	 */
 	public abstract void printState();
 
-	public abstract void initState();
+	
+	/***
+	 * A History state
+	 */
+	class State {
+		public State(int index, int value) {
+			this.index = index;
+			this.value = value;
+		}
+
+		public int index;
+		public int value;
+	}
 
 }
