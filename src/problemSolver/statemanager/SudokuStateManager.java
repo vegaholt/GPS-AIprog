@@ -116,7 +116,7 @@ public class SudokuStateManager extends StateManager {
 	public double getStateValue() {
 		calculateConflicts();
 		return 1.0 - 1.0 * sumConflicts
-				/ (size*(size-3)*3);
+				/ (size*(size-1)*3);
 	}
 	
 	public void printState() {
@@ -193,7 +193,7 @@ public class SudokuStateManager extends StateManager {
 		}
 	}
 	
-	/**S
+	/**
 	 * Sums up valueCount array and resets it
 	 * @return
 	 */

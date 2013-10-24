@@ -119,12 +119,8 @@ public abstract class StateManager {
 		int bestValue = 0, bestIndex = 0, oldValue = 0;
 		double bestScore = 0, newScore = 0;
 		for (int i = 0; i < generateNNeigbours; i++) {
-			int index;
-			//Gets random index that is not constrained
-			do{
-				index = (int) (Math.random() * values.length);
-			}while(isConstrainedIndex(index));
-			
+//			//Gets random  with conflict and index that is not constrained
+			int index = getRandomWithConflict();
 			//Gets random value 
 			int value = getRandomConstrained(index);
 			//Stores old value
